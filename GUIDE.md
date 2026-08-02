@@ -353,7 +353,39 @@ the ones that disagree before averaging.
 
 ---
 
-## 4. Drizzle: when and how
+## 4. Sampling, binning and drizzle
+
+### Check your sampling first
+
+Before reaching for drizzle, work out whether your pixels or your *sky* are the
+limit. Two numbers do it:
+
+```
+    plate scale  =  206.265 x pixel size (um) / focal length (mm)     arcsec/px
+    px per FWHM  =  the FWHM the stack reports, in pixels
+```
+
+Nyquist needs about **2 pixels per FWHM**; 3 is comfortable. Above that you are
+**oversampled** — you are spreading the same photons over more pixels than the
+seeing can fill, and every one of them carries its own read noise.
+
+- **More than ~4 px per FWHM → bin, do not drizzle.** Set **Output binning 2×2**.
+  You lose no real resolution and gain about **2× the signal-to-noise per pixel**,
+  for free, in one click.
+- **Under ~2 px per FWHM → you are undersampled**, and drizzle (with dithered
+  subs) genuinely recovers detail.
+- **In between → leave both off.**
+
+> Worked example, from a real 1325 mm / 3.8 µm rig: plate scale 0.59″/px, and the
+> stack reported FWHM 5.71 px = 3.38″. That is **5.7 px per FWHM — oversampled
+> about 1.9×.** Binning 2×2 gives 1.18″/px and 2.9 px per FWHM, still properly
+> sampled, at twice the SNR. Drizzling that data would have made it *worse*: more
+> pixels, no more detail, and the noise spread thinner.
+
+Drizzle is not a sharpening tool. It only helps when the sensor, not the sky, is
+what is limiting you.
+
+### Drizzle: when and how
 
 Drizzle recovers detail a normal average cannot, but it has one hard
 requirement: **your subs must be dithered.**
@@ -839,7 +871,39 @@ Pour chaque pixel de sortie, la pile contient un échantillon par image ; le rej
 
 ---
 
-## 4. Le drizzle : quand et comment
+## 4. Échantillonnage, binning et drizzle
+
+### Vérifiez d'abord votre échantillonnage
+
+Avant de vous tourner vers le drizzle, déterminez si la limite vient de vos
+pixels ou du *ciel*. Deux nombres suffisent :
+
+```
+    échelle      =  206,265 x taille pixel (um) / focale (mm)     arcsec/px
+    px par FWHM  =  la FWHM annoncée par l'empilement, en pixels
+```
+
+Nyquist demande environ **2 pixels par FWHM** ; 3 est confortable. Au-delà, vous
+**suréchantillonnez** : les mêmes photons s'étalent sur plus de pixels que le
+seeing ne peut en remplir, et chacun apporte son propre bruit de lecture.
+
+- **Plus d'environ 4 px par FWHM → binnez, ne drizzlez pas.** Activez **Output
+  binning 2×2**. Vous ne perdez aucune résolution réelle et gagnez environ **2×
+  le rapport signal/bruit par pixel**, gratuitement, en un clic.
+- **Moins d'environ 2 px par FWHM → vous sous-échantillonnez**, et le drizzle
+  (avec des poses dithérées) récupère réellement du détail.
+- **Entre les deux → laissez les deux désactivés.**
+
+> Exemple réel, monture 1325 mm / 3,8 µm : échelle 0,59″/px et FWHM annoncée de
+> 5,71 px = 3,38″. Soit **5,7 px par FWHM — suréchantillonné environ 1,9×.** Un
+> binning 2×2 donne 1,18″/px et 2,9 px par FWHM, toujours correctement
+> échantillonné, avec deux fois le RSB. Drizzler ces données les aurait
+> *dégradées* : plus de pixels, pas plus de détail, et le bruit étalé plus mince.
+
+Le drizzle n'est pas un outil de netteté. Il n'aide que lorsque c'est le capteur,
+et non le ciel, qui vous limite.
+
+### Le drizzle : quand et comment
 
 Le drizzle récupère des détails qu'une moyenne classique ne restitue pas, mais il
 impose une condition stricte : **vos poses doivent être dithérées.**

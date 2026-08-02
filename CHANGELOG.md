@@ -5,6 +5,36 @@ public repo and shows every section newer than the version you are running, so
 each heading must start with `## <version>` and sections must stay in
 descending version order.
 
+## 1.9.1
+
+- **The narrowband colour products are about twice as fast.** Asking for SHO,
+  HaRGB and RGB_SHO together cost **8.1 s; it now costs 4.0 s** — measured on the
+  same machine against the 1.9.0 build, not estimated.
+
+  Each product used to register the narrowband masters itself, onto the same
+  pixel grid as the others — eight registrations where three do, plus the same
+  16 megapixel star detection repeated eight times. They are registered once now
+  and shared.
+
+  Three smaller ones with them: finding a channel's sky level no longer
+  duplicates the whole 65 MB image to read one number out of it, the SHO channel
+  balance takes two order statistics instead of sorting 3.2 million samples three
+  times, and the colour smoothing now uses every core like the rest of the
+  pipeline.
+
+- Your files are unchanged in all but the last decimal. The single-filter masters
+  are byte-identical; the colour products move by at most 0.3 ADU on an 840 ADU
+  sky, from the sampled median — 2% of one step of the 16 ADU your camera
+  quantises to.
+
+- **New in the manual: how to tell whether to bin or to drizzle.** Work out your
+  plate scale and pixels-per-FWHM, and the answer follows. Above ~4 px per FWHM
+  you are oversampled and **Output binning 2×2 is a free doubling of
+  signal-to-noise**; below ~2 you are undersampled and drizzle genuinely helps.
+  Measured on a real 1325 mm / 3.8 µm rig at 5.7 px per FWHM, drizzling would
+  have made the result *worse* — more pixels, no more detail, noise spread
+  thinner. Both languages, with the arithmetic.
+
 ## 1.9.0
 
 - **New: `<name>_RGB_SHO.fits`** — broadband **colour** with narrowband
