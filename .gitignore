@@ -1,0 +1,8 @@
+# NEVER publish operator/secret files if they land in this folder by accident.
+*.key
+fs_private.key
+donors.csv
+fs_keygen*.exe
+fs_keygen*
+# Local archive of shipped binaries: ~200 MB, never published.
+Bak/

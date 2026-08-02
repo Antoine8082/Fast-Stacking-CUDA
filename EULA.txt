@@ -1,0 +1,78 @@
+End-User License Agreement (EULA) for FS-CUDA
+
+IMPORTANT: PLEASE READ THIS LICENSE CAREFULLY BEFORE USING THIS SOFTWARE.
+
+By downloading, installing, or using FS-CUDA (the "Software"), you agree to be
+bound by the terms of this End-User License Agreement ("Agreement"). If you do
+not agree to the terms of this Agreement, do not install or use the Software.
+
+1. License Grant and Donationware Model
+
+FS-CUDA is distributed as Proprietary Donationware. The developer (Antoine8082)
+grants you a personal, non-exclusive, non-transferable limited license to use
+the Software for personal, non-commercial, or educational astrophotography
+purposes, subject to the following conditions:
+
+   Unregistered Version (Free/Trial): You may use the Software free of charge.
+   The unregistered version includes a fully functional basic processing
+   pipeline. However, it imposes a startup delay (Nag Screen) after a 10-export
+   trial period, injects a watermark into the FITS header metadata of exported
+   files, and locks access to the advanced Phase 2 engine.
+
+   Registered Version (Unlocked): To remove the startup delay, remove the FITS
+   metadata watermark, and permanently unlock the advanced Phase 2 processing
+   engine, you must make a qualifying donation (minimum 2 EUR) to the developer
+   via the official PayPal link (https://paypal.me/Antoine8082) and provide your
+   Hardware ID (HWID). Upon verification, you will receive a personal
+   cryptographic License Key.
+
+2. Hardware Binding and License Key Usage
+
+The License Key provided to you is mathematically bound to the specific hardware
+(Motherboard/CPU) of your computer.
+
+   You are strictly prohibited from sharing, publishing, or distributing your
+   personal License Key and Email combination.
+
+   If you upgrade your core computer hardware, your License Key may become
+   invalid. In such cases, you may contact the developer for a key reset,
+   granted at the developer's sole discretion.
+
+3. Restrictions
+
+To protect the proprietary CUDA kernels and the licensing architecture, you may
+NOT:
+
+   Decompile, reverse-engineer, disassemble, or attempt to derive the source
+   code of the Software.
+
+   Modify, translate, or create derivative works based on the Software.
+
+   Remove, alter, or obscure any proprietary notices, labels, or FITS metadata
+   injected by the Unregistered Version.
+
+   Distribute, host, or mirror the Software binary on third-party websites
+   without explicit permission from the developer. Users must download the
+   Software from the official source.
+
+4. Intellectual Property
+
+All rights, title, interest, and copyrights in and to the Software, including
+any architectural designs, CUDA optimizations, and documentation, are owned
+exclusively by the developer. This Software is NOT Open Source.
+
+5. Disclaimer of Warranties
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT. The developer does not warrant
+that the Software will be error-free or that it will not cause performance
+throttling or thermal events on your specific GPU/hardware configuration.
+
+6. Limitation of Liability
+
+IN NO EVENT SHALL THE DEVELOPER BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF, OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE (INCLUDING BUT NOT LIMITED TO LOSS OF DATA, CORRUPTED FITS FILES, OR
+HARDWARE OVERHEATING).
