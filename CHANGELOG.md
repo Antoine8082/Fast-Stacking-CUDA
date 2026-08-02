@@ -5,6 +5,54 @@ public repo and shows every section newer than the version you are running, so
 each heading must start with `## <version>` and sections must stay in
 descending version order.
 
+## 1.10.0
+
+Trail rejection was rebuilt. On the test data it went from finding **none** of
+the satellite trails you could see in the frames to finding **all three**, while
+throwing away far less of your night.
+
+- **Trails now remove PIXELS, not whole frames.** A trail is about 0.1% of a
+  frame; the old behaviour discarded the other 99.9% with it. Measured on 38
+  real subs: **18,608 pixels masked instead of three whole frames — 2,642× less
+  data lost**, the same trails gone, and **11 stars recovered** in the master.
+  Quality now equals not rejecting at all.
+
+  The masked pixels are simply absent for that one frame, so the others supply
+  them. Nothing is invented — this is not the old "patch it with the reference",
+  which is what once carved a band through M57.
+
+- **Faint trails are detectable at all now.** The line detector's angle grid was
+  1.5°, and across a 4,650 px frame a half-cell error moves a line by 61 px — so
+  a faint trail's evidence smeared across 30 cells and could never register.
+  Worked through: 765 votes total, 25 in the best cell, against a threshold of
+  82. It was mathematically impossible, which is why raising sensitivity had
+  never helped. The grid is now four times finer for the same memory.
+
+- **Diffraction spikes are no longer mistaken for trails.** Brightness cannot
+  tell them apart — on real frames the spike from a bright star just outside the
+  field was the *strongest* line in most subs, brighter than a genuine satellite
+  elsewhere. A spike radiates *from a star*, so lines passing through one are
+  now spared, at any angle.
+
+- **The width test follows your seeing.** A trail is blurred by the same optics
+  as the stars, so it can never be thinner than they are. A fixed 6-pixel limit
+  sat below a 7.04 px FWHM and was rejecting real trails for being exactly as
+  wide as they must be — one of them by a single pixel.
+
+- **Same detector on every path.** Trail behaviour used to change depending on
+  whether Drizzle was ticked: two unrelated options, one outcome. Fixed.
+
+- **You can see what it did.** The result panel now reports how many frames
+  carried a trail and how many pixels were masked. Nothing is dropped, so
+  "Rejected 0" was previously all you saw.
+
+- **New: Linear fit rejection.** Clips each pixel against a line fitted to its
+  sorted samples rather than against the median. Reach for it when a session
+  drifted in transparency or sky level, where sigma clipping's threshold widens
+  and lets outliers hide. On a stack with no drift it is *worse* — measured 924
+  stars and noise 29.0 against 938 and 27.3 — so it stays off by default and the
+  tooltip says so.
+
 ## 1.9.1
 
 - **The narrowband colour products are about twice as fast.** Asking for SHO,

@@ -125,9 +125,31 @@ mostly from atmospheric dispersion at low altitude. *Leave on.*
 repair cannot fix because the whole neighbourhood is bad. *Leave on.*
 
 **Reject trails** — finds satellite and aircraft trails and removes them. It
-looks for bright straight lines present in only one or two frames and replaces
-just those pixels. A real object, present in every frame, is never touched.
-*Leave on.*
+looks for bright straight lines **at any angle** and **masks just those pixels**:
+the affected samples are dropped from that one frame and the other frames supply
+those pixels instead. Nothing is invented, and **no frame is lost** — on a real
+38-frame set this discarded 18,608 pixels instead of three whole subs, about
+2,600× less data for the same trails removed, and recovered 11 stars in the
+master. *Leave on.*
+
+Three things keep it from removing what you want to keep:
+
+- **Diffraction spikes are spared.** A spike radiates *from a star*, a satellite
+  does not, so lines passing through a bright star are left alone. Brightness
+  could never make this call — on real frames the spike from a star just outside
+  the field was the *strongest* line in most subs, brighter than a genuine
+  satellite elsewhere.
+- **The width test follows your seeing.** A trail is blurred by the same optics
+  as the stars, so it can never be thinner than they are; the limit scales with
+  the measured FWHM rather than being fixed.
+- **A real object, present in every frame, is never touched** — it cancels
+  against the reference and is never even considered.
+
+After a stack the result panel reports how many frames carried a trail and how
+many pixels were masked. Nothing is dropped, so the "Rejected" count stays at
+zero; that line is the one that tells you trail rejection did anything. If the
+number looks large for your sky, inspect the master along those lines before
+trusting it.
 
 **Per-pixel weight** — instead of one weight per frame, weights each pixel by its
 own expected noise (from sensor gain and read noise). Slightly deeper faint
@@ -621,9 +643,32 @@ la réparation cosmétique ne peut pas corriger puisque tout le voisinage est
 mauvais. *À laisser activé.*
 
 **Reject trails** — repère les traînées de satellites et d'avions et les
-supprime. Il cherche des lignes droites brillantes présentes sur une ou deux
-images seulement et ne remplace que ces pixels. Un objet réel, présent sur toutes
-les images, n'est jamais touché. *À laisser activé.*
+supprime. Il cherche des lignes droites brillantes **à n'importe quel angle** et
+**masque uniquement ces pixels** : les échantillons concernés sont retirés de
+cette seule image et les autres images fournissent ces pixels à la place. Rien
+n'est inventé, et **aucune image n'est perdue** — sur un jeu réel de 38 poses,
+cela a écarté 18 608 pixels au lieu de trois poses entières, soit environ 2 600
+fois moins de données pour les mêmes traînées supprimées, et récupéré 11 étoiles
+dans le maître. *À laisser activé.*
+
+Trois garde-fous l'empêchent de retirer ce que vous voulez garder :
+
+- **Les aigrettes de diffraction sont épargnées.** Une aigrette rayonne *depuis
+  une étoile*, pas un satellite : les lignes passant par une étoile brillante
+  sont donc laissées intactes. La luminosité ne pouvait pas trancher — sur de
+  vraies poses, l'aigrette d'une étoile juste hors champ était la ligne la *plus
+  brillante* de la plupart des poses, davantage qu'un vrai satellite ailleurs.
+- **Le test de largeur suit votre seeing.** Une traînée est floutée par la même
+  optique que les étoiles : elle ne peut pas être plus fine qu'elles. La limite
+  s'adapte à la FWHM mesurée au lieu d'être fixe.
+- **Un objet réel, présent sur toutes les images, n'est jamais touché** — il
+  s'annule face à la référence et n'est même pas envisagé.
+
+Après un empilement, le panneau de résultat indique combien de poses portaient
+une traînée et combien de pixels ont été masqués. Rien n'étant supprimé, le
+compteur « Rejected » reste à zéro : c'est cette ligne qui vous dit que le rejet
+des traînées a fait quelque chose. Si le nombre paraît élevé pour votre ciel,
+inspectez le maître le long de ces lignes avant de lui faire confiance.
 
 **Per-pixel weight** — au lieu d'un poids unique par image, pondère chaque pixel
 selon son propre bruit attendu (gain du capteur et bruit de lecture). Détails
