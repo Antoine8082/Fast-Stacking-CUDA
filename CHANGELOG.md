@@ -5,6 +5,35 @@ public repo and shows every section newer than the version you are running, so
 each heading must start with `## <version>` and sections must stay in
 descending version order.
 
+## 1.11.14
+
+**GESD rejection was measuring against the wrong number of frames near the edges
+of a dithered stack.** Fixed. This changes GESD masters slightly; nothing else
+is affected.
+
+- Where your frames drift or dither, the edge of the stacked field is covered by
+  only some of them. GESD averaged the frames that *were* there but divided by
+  how many frames you gave it, so its idea of the sky level in that band came
+  out too low — and lopsidedly so: it then always looked at the brightest
+  samples first, could never remove a sample that was too *dark*, and needed
+  outliers to be larger than they should have been before it acted. Precisely
+  the moderate outliers GESD exists to catch, in precisely the region where the
+  fewest frames are averaging them away.
+- Measured on three real sessions, comparing before and after:
+
+  | | noise | stars |
+  |---|---|---|
+  | 107-frame colour set | 5.11 → **5.09** | 1770 → **1797** |
+  | 124-frame red set | 21.9 → **21.8** | 13605 → **13789** |
+  | 91-frame narrowband set | 52.3 → 52.5 | 216 → 215 |
+
+  Better on two, and level on the third. A correction is not the same thing as
+  an improvement everywhere, and it would be dishonest to present it as one.
+- **Winsorized sigma and Linear fit are untouched** — verified identical to the
+  last bit. If you have never used GESD, nothing about your masters changes.
+- If you have GESD masters you want to keep comparable, restack them or keep the
+  old files; the difference is confined to the partly-covered border.
+
 ## 1.11.13
 
 **GESD and Linear fit rejection now run on the fast engine too.** Between this
