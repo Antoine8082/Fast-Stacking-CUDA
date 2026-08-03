@@ -5,6 +5,23 @@ public repo and shows every section newer than the version you are running, so
 each heading must start with `## <version>` and sections must stay in
 descending version order.
 
+## 1.11.5
+
+**Runs with both Normalize and Reject trails on are noticeably quicker.**
+
+With those two together the program was preparing every frame twice — reading it
+onto the graphics card, calibrating and debayering it once for the trail
+detector and again for the background matching. It now prepares each frame once
+and both use the result.
+
+    1089 frames, full quality set:   3 min 39 s  ->  3 min 02 s
+
+Combined with 1.11.4, the same stack has gone from 3 min 55 s to 3 min 02 s.
+
+Your masters are byte-for-byte identical, verified on 1089 real frames. If you
+use Normalize without Reject trails, nothing changes for you — there is only one
+preparation pass in that case and it was already doing the minimum.
+
 ## 1.11.4
 
 **Most stacks are now noticeably faster, and nothing about the results changes.**
