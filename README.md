@@ -2,7 +2,7 @@
   <img src="fs-cuda-logo-512.png" alt="FS-CUDA" width="180">
 </p>
 
-[![Download FS-CUDA.exe](https://img.shields.io/badge/Télécharger-FS--CUDA.exe-0078D4?style=for-the-badge&logo=windows&logoColor=white)](https://github.com/Antoine8082/Fast-Stacking-CUDA/releases/latest/download/FS-CUDA.exe)
+[![Download FS-CUDA.exe](https://img.shields.io/badge/Download-FS--CUDA.exe-0078D4?style=for-the-badge&logo=windows&logoColor=white)](https://github.com/Antoine8082/Fast-Stacking-CUDA/releases/latest/download/FS-CUDA.exe)
 [![Télécharger FS-CUDA.exe](https://img.shields.io/badge/Télécharger-FS--CUDA.exe-0078D4?style=for-the-badge&logo=windows&logoColor=white)](https://github.com/Antoine8082/Fast-Stacking-CUDA/releases/latest/download/FS-CUDA.exe)
 
 <p align="center">
