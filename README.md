@@ -240,7 +240,7 @@ réinitialisation.
 
 ## Benchmark
 
-Measured on **FS-CUDA 1.11.1**, on a Lenovo Yoga Pro 9 16IAH10 — Core Ultra 9
+Measured on **FS-CUDA 1.11.15**, on a Lenovo Yoga Pro 9 16IAH10 — Core Ultra 9
 285H (16 threads), 64 GB RAM, **RTX 5070 Laptop** — stacking **1089 real light
 frames of 3008 × 3008 px** (OSC/CFA, 16-bit) from an internal NVMe SSD. Times
 are the full run: reading every frame, registering, integrating and writing the
@@ -248,22 +248,33 @@ master.
 
 | Settings | Time |
 |---|---|
-| Normalize + Autocrop + RGB align + Per-pixel weight<br>(RCD debayer, Winsorized Sigma, Noise weighting) | **3 min 11 s** |
-| Same, plus Reject trails | **3 min 43 s** |
+| Normalize + Autocrop + RGB align + Per-pixel weight + Defect fix<br>(RCD debayer, Winsorized Sigma, Noise weighting) | **3 min 32 s** |
+| Same, plus Reject trails | **3 min 23 s** |
+| Same, with Defect fix unticked | **3 min 06 s** |
 
 Memory use stays flat regardless of how many frames you stack.
 
-**Reject trails now costs about 30 seconds on this stack, not a change of
-engine.** Until 1.11 it fell back to the slower CPU path and roughly doubled the
-run; it stays on the GPU pipeline and produces the same master as before.
+**Reject trails costs nothing here, and the table is not a misprint.** Local
+normalization reads the very frames the trail pass has already prepared, so with
+Normalize on the two share that work; switch trails off and normalization has to
+prepare them itself. If you are already normalizing, trail rejection is free.
 
-Drizzle and Defect fix still use the CPU path — their results cannot yet be
-reproduced bit-for-bit on the GPU — and are substantially slower. Leave them off
-unless you need them.
+**Defect fix is the one option worth a thought.** It has been on by default since
+1.11.10, and on this set it cost 26 seconds and produced a master identical to
+the last bit — it found nothing to repair, because the sensor is clean. It stays
+on by default because a bad column you have not noticed ruins a master and costs
+far more than 13%. If you know your sensor is clean, untick it.
+
+**Every option now runs on the fused GPU engine.** Drizzle, defect repair, the
+GESD and Linear fit rejection modes and the SuperPixel debayer each moved onto it
+between 1.11.9 and 1.11.15, and each was verified to produce a master identical
+to the older engine's, to the last bit, before it shipped. The classic engine
+remains only for machines with no CUDA graphics card, for lights that are not
+16-bit, and for stacks too small to be worth the setup.
 
 ### Performances mesurées
 
-Mesuré sur **FS-CUDA 1.11.1**, sur un Lenovo Yoga Pro 9 16IAH10 — Core Ultra 9
+Mesuré sur **FS-CUDA 1.11.15**, sur un Lenovo Yoga Pro 9 16IAH10 — Core Ultra 9
 285H (16 threads), 64 Go de RAM, **RTX 5070 Laptop** — pour l'empilement de
 **1089 poses réelles de 3008 × 3008 px** (CFA/OSC, 16 bits) depuis un SSD NVMe
 interne. Les durées correspondent au traitement complet : lecture de chaque
@@ -271,19 +282,32 @@ pose, alignement, intégration et écriture du maître final.
 
 | Réglages | Durée |
 |---|---|
-| Normalize + Autocrop + RGB align + pondération par pixel<br>(dématriçage RCD, Winsorized Sigma, pondération Noise) | **3 min 11 s** |
-| Idem, plus Reject trails | **3 min 43 s** |
+| Normalize + Autocrop + RGB align + pondération par pixel + Defect fix<br>(dématriçage RCD, Winsorized Sigma, pondération Noise) | **3 min 32 s** |
+| Idem, plus Reject trails | **3 min 23 s** |
+| Idem, avec Defect fix décoché | **3 min 06 s** |
 
 La consommation mémoire reste stable quel que soit le nombre d'images.
 
-**Reject trails coûte désormais environ 30 secondes sur cet empilement, et non
-un changement de moteur.** Jusqu'à la 1.11, l'option basculait sur le chemin CPU
-et doublait à peu près la durée ; elle reste maintenant sur le pipeline GPU et
-produit le même maître qu'avant.
+**Reject trails ne coûte rien ici, et le tableau n'est pas une coquille.** La
+normalisation locale lit précisément les images que la passe de traînées a déjà
+préparées : avec Normalize activé, les deux se partagent ce travail ; sans
+traînées, la normalisation doit les préparer elle-même. Si vous normalisez déjà,
+la réjection des traînées est gratuite.
 
-Le drizzle et Defect fix utilisent encore le chemin CPU — leurs résultats ne
-peuvent pas encore être reproduits au bit près sur le GPU — et sont nettement
-plus lents. Laissez-les désactivés si vous n'en avez pas besoin.
+**Defect fix est la seule option qui mérite réflexion.** Activée par défaut
+depuis la 1.11.10, elle a coûté 26 secondes sur cette série et produit un maître
+identique au bit près : elle n'a rien trouvé à réparer, le capteur étant sain.
+Elle reste activée par défaut parce qu'une colonne défectueuse que vous n'auriez
+pas remarquée gâche un maître et coûte bien plus que 13 %. Si vous savez votre
+capteur sain, décochez-la.
+
+**Toutes les options tournent désormais sur le moteur GPU fusionné.** Le drizzle,
+la réparation des défauts, les modes de réjection GESD et Linear fit et le
+dématriçage SuperPixel y ont été portés entre la 1.11.9 et la 1.11.15, chacun
+vérifié comme produisant un maître identique au bit près à celui de l'ancien
+moteur avant sa publication. Le moteur classique ne sert plus que pour les
+machines sans carte CUDA, les poses qui ne sont pas en 16 bits, et les piles trop
+petites pour justifier la mise en place.
 
 ## Updates
 

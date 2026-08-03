@@ -5,6 +5,25 @@ public repo and shows every section newer than the version you are running, so
 each heading must start with `## <version>` and sections must stay in
 descending version order.
 
+## 1.11.15
+
+**Every option now runs on the fast engine.** SuperPixel was the last one that
+did not.
+
+- **SuperPixel** is about **twice as quick**: measured on a 107-frame set,
+  28.9 s → 15.6 s, and the master is **identical to the last bit**. It is the
+  only debayer that halves the image as it works, which is why it took longest
+  to move across.
+- The **Slower engine (v1)** note in Options is now gone for good. Nothing you
+  can tick brings it back. The classic engine remains only for machines with no
+  CUDA graphics card, for lights that are not 16-bit, and for stacks too small
+  to be worth the setup — none of which are choices you make in the window.
+
+**`--no-defect` added to the command line.** Defect repair became on-by-default
+in 1.11.10 and there was no way to switch it off from `fs_stack` — `--defect`
+had quietly become a no-op. It changes your data, so there has to be a way to
+say no. The GUI checkbox was always there.
+
 ## 1.11.14
 
 **GESD rejection was measuring against the wrong number of frames near the edges
