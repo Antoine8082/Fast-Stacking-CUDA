@@ -124,7 +124,10 @@ it off to keep the whole field including edges.
 mostly from atmospheric dispersion at low altitude. *Leave on.*
 
 **Defect fix** — repairs entire dead or hot columns and rows, which cosmetic
-repair cannot fix because the whole neighbourhood is bad. *Leave on.*
+repair cannot fix because the whole neighbourhood is bad. *On by default.* It only acts on a line that stands far out from
+its neighbours, so on a clean sensor it changes nothing at all — measured on a
+107-frame set, not one pixel of 49 million moved. Since 1.11.9 it also no longer
+slows the stack down.
 
 **Reject trails** — finds satellite and aircraft trails and removes them. It
 looks for bright straight lines **at any angle** and **masks just those pixels**:
@@ -641,7 +644,10 @@ dus surtout à la dispersion atmosphérique à basse hauteur. *À laisser activ�
 
 **Defect fix** — répare les colonnes et lignes entièrement mortes ou chaudes, que
 la réparation cosmétique ne peut pas corriger puisque tout le voisinage est
-mauvais. *À laisser activé.*
+mauvais. *Activé par défaut.* Il n'agit que
+sur une ligne qui se détache nettement de ses voisines : sur un capteur sain il
+ne change donc rien du tout — mesuré sur une série de 107 poses, pas un pixel sur
+49 millions n'a bougé. Depuis la 1.11.9 il ne ralentit plus l'empilement.
 
 **Reject trails** — repère les traînées de satellites et d'avions et les
 supprime. Il cherche des lignes droites brillantes **à n'importe quel angle** et

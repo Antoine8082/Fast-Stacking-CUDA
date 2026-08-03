@@ -5,6 +5,28 @@ public repo and shows every section newer than the version you are running, so
 each heading must start with `## <version>` and sections must stay in
 descending version order.
 
+## 1.11.10
+
+**Defect fix could damage frames instead of repairing them.** Fixed, and it is
+now on by default.
+
+- The test that decides a column or row is bad compares it against how much the
+  *other* lines vary. On a frame where they barely vary at all — a flat, a short
+  or very smooth sub — that comparison lets ordinary lines look like defects, and
+  it would replace a large part of the frame with averages of its neighbours. On
+  such a set it could damage the subs badly enough that they failed to register.
+  It now refuses outright whenever it would touch more than a twentieth of the
+  lines: a camera has a few bad columns, not hundreds, so anything claiming
+  otherwise is wrong and doing nothing is the right answer.
+- With that fixed, **Defect fix is on by default**. It only acts on a line that
+  stands far out from its neighbours, so on a healthy sensor it changes nothing
+  at all — measured on a 107-frame set, not one pixel of 49 million moved — and
+  since 1.11.9 it no longer slows the stack down either. If your camera does have
+  a bad column, it is now repaired without you having to know to ask.
+
+If you had deliberately switched Defect fix off, use **Restore** in Options or
+untick it again; your saved settings are respected.
+
 ## 1.11.9
 
 **Faster, with identical results.** Every change below was checked by comparing
