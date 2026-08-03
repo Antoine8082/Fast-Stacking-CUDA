@@ -5,6 +5,25 @@ public repo and shows every section newer than the version you are running, so
 each heading must start with `## <version>` and sections must stay in
 descending version order.
 
+## 1.11.8
+
+**Reject trails was flagging frames that carry no trail.** On a 1089-frame set it
+called out 16 frames; only 3 of them had anything on them. Fixed.
+
+- The test that decides "this line of pixels is a trail, not a coincidence"
+  measures how *solidly* the line is filled in. A satellite is a continuous
+  streak, so it fills its own path densely; a chance alignment of unrelated
+  pixels does not. The threshold for that test was set some time ago and a later
+  improvement to the measurement made it too lenient — real trails now measure
+  three times higher than the bar, and the false ones were creeping over it by
+  hundredths.
+- Retuned to sit midway between the two, using the figure the detector was
+  designed around. Every frame with a confirmed trail across four different
+  targets is still caught, with exactly the same pixels masked as before.
+
+If a frame was wrongly flagged, you were losing a patch of real sky on it for no
+reason. That stops. Frames with genuine trails are unaffected.
+
 ## 1.11.7
 
 **The manual described trail rejection as it worked two releases ago.** Corrected,
