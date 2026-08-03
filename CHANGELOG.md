@@ -5,6 +5,38 @@ public repo and shows every section newer than the version you are running, so
 each heading must start with `## <version>` and sections must stay in
 descending version order.
 
+## 1.11.3
+
+**Large stacks on the CPU path could die without saying anything. Fixed.**
+
+On a big run — 1089 frames with Normalize, Autocrop, RGB align and Per-pixel
+weight — the program could vanish partway through registering, with no error
+message and nothing saved. It needed a machine with plenty of free memory to
+show up, which is why it survived this long.
+
+Three separate faults, all now fixed:
+
+- **It was claiming too much memory.** The working budget was set from the free
+  memory reported at startup, as though the whole of it were available to the
+  program. It is not: while stacking, Windows is also caching the frames being
+  read and the working file being written. On a 64 GB machine that meant asking
+  for about 52 GB and eventually being refused one allocation too many. It now
+  leaves the cache room to work — and the run is *faster* that way, not slower:
+  6 min 38 s against 7 min 35 s when forced smaller by hand.
+
+- **When memory did run short, it gave up instead of using the disk.** Frames
+  are held in RAM up to a limit and spilled to a working file beyond it. If the
+  RAM side failed, the run ended — with the working file sitting there unused.
+  It now simply stops growing and spills from that point on.
+
+- **The error was being destroyed on its way out.** A background thread was
+  being torn down as the failure propagated, which on Windows ends the process
+  immediately and discards the message. That is why there was nothing to report.
+  Any failure now reaches you as an error instead of a disappearance.
+
+If you have hit an unexplained exit on a large stack, this was very likely it.
+Nothing about image results changes.
+
 ## 1.11.2
 
 **The "Slower engine (v1)" warning was still blaming Reject trails.**
