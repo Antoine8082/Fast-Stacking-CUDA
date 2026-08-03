@@ -5,6 +5,27 @@ public repo and shows every section newer than the version you are running, so
 each heading must start with `## <version>` and sections must stay in
 descending version order.
 
+## 1.11.9
+
+**Faster, with identical results.** Every change below was checked by comparing
+the finished master byte for byte against the previous version's. Nothing about
+your images changes.
+
+- **Defect fix no longer switches you to the slow engine.** It was the last
+  option doing that for a fixable reason. On a 107-frame set the same stack went
+  from 35.8s to 20.7s. If you use it, it now costs roughly nothing.
+- **Bayer drizzle is faster**: the heaviest stage of it now runs on the graphics
+  card. Same 107-frame set, 49.3s to 44.4s.
+- **Reject trails is faster too**, and noticeably so on the detection stage.
+
+**One real fix in Reject trails.** When a frame contained many trail-like
+candidates — bright gradients, dust, an aggressive edge — a genuine satellite
+could be crowded out of the shortlist the detector examines, and silently missed.
+The shortlist is now three times longer. On every frame with a confirmed trail
+across four targets the same pixels are still masked, so if the detector was
+already catching your trails you will see no difference; the change is there for
+the frames where it was about to stop.
+
 ## 1.11.8
 
 **Reject trails was flagging frames that carry no trail.** On a 1089-frame set it
