@@ -5,6 +5,31 @@ public repo and shows every section newer than the version you are running, so
 each heading must start with `## <version>` and sections must stay in
 descending version order.
 
+## 1.11.12
+
+**Drizzle now runs on the fast engine — roughly twice as quick.** It was the
+last big option that pushed a stack onto the slower one.
+
+- Measured on a 107-frame set, and the master is **identical to the last bit**
+  in every case:
+
+  | | before | after |
+  |---|---|---|
+  | Drizzle 2x + Bayer | 56 s | **31 s** |
+  | Drizzle 2x + Bayer + Normalize | 67 s | **48 s** |
+  | Drizzle 2x on its own | 73 s | **45 s** |
+
+- Nothing about the picture changes — same rejection, same trail masks, same
+  normalization applied to every drop. Only the time.
+- The **Slower engine (v1)** note in Options no longer lists Drizzle 2x,
+  because it no longer applies.
+
+**Two option descriptions were wrong and are corrected.** *Reject trails* said
+it costs the fast engine; it stopped doing so in 1.11.0, and measured on 107
+frames it now costs about a third more time (20.5 s → 27.2 s) with the fast
+engine throughout. *Drizzle 2x* said it costs the fast engine and about 3× the
+time; it is now about 1.5×.
+
 ## 1.11.11
 
 **GESD and Linear fit rejection now run on the graphics card.** Choosing either
