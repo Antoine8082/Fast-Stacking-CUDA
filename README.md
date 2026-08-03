@@ -186,17 +186,17 @@ watermark in their header, and the Phase-2 quality options lock (Normalize,
 Autocrop, RGB align, Defect-tolerant per-pixel weighting, Reject trails and
 Drizzle). Basic stacking keeps working.
 
-> # ⭐ Donate — from **2 EUR**
+> # ⭐ Donate — from **2 EURO**
 > ### 👉 **https://paypal.me/Antoine8082**
 >
-> **A donation of at least 2 EUR unlocks FS-CUDA permanently on your machine:**
+> **A donation of at least 2 EURO unlocks FS-CUDA permanently on your machine:**
 > no startup screen, no watermark, and the full Phase-2 quality engine.
 >
 > FS-CUDA is developed by one person. If it saves you time, please support it.
 
 Then, to receive your key:
 
-1. Donate: **https://paypal.me/Antoine8082** — **minimum 2 EUR**
+1. Donate: **https://paypal.me/Antoine8082** — **minimum 2 EURO**
 2. In FS-CUDA, open **Enter license** and copy your **Machine ID**
    (`HWID-XXXX-XXXX`).
 3. Send that Machine ID and your PayPal email to the developer at
@@ -214,10 +214,10 @@ FITS exportés portent un filigrane dans leur en-tête, et les options de qualit
 Phase 2 se verrouillent (Normalize, Autocrop, RGB align, pondération par pixel,
 Reject trails et Drizzle). L'empilement de base continue de fonctionner.
 
-> # ⭐ Faire un don — à partir de **2 EUR**
+> # ⭐ Faire un don — à partir de **2 EURO**
 > ### 👉 **https://paypal.me/Antoine8082**
 >
-> **Un don d'au moins 2 EUR déverrouille FS-CUDA définitivement sur votre
+> **Un don d'au moins 2 EURO déverrouille FS-CUDA définitivement sur votre
 > machine :** plus d'écran de démarrage, plus de filigrane, et le moteur de
 > qualité Phase 2 au complet.
 >
@@ -226,7 +226,7 @@ Reject trails et Drizzle). L'empilement de base continue de fonctionner.
 
 Ensuite, pour recevoir votre clé :
 
-1. Faites un don : **https://paypal.me/Antoine8082** — **2 EUR minimum**
+1. Faites un don : **https://paypal.me/Antoine8082** — **2 EURO minimum**
 2. Dans FS-CUDA, ouvrez **Enter license** et copiez votre **Machine ID**
    (`HWID-XXXX-XXXX`).
 3. Envoyez ce Machine ID et l'adresse e-mail de votre PayPal au développeur à
