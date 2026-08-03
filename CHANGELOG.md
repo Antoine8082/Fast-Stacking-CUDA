@@ -5,6 +5,29 @@ public repo and shows every section newer than the version you are running, so
 each heading must start with `## <version>` and sections must stay in
 descending version order.
 
+## 1.11.13
+
+**GESD and Linear fit rejection now run on the fast engine too.** Between this
+release and the last two, every option that used to push a stack onto the slower
+engine has moved off it except one.
+
+- Measured on a 107-frame set, and the master is **identical to the last bit**:
+
+  | | before | after |
+  |---|---|---|
+  | GESD | 62 s | **45 s** |
+  | Linear fit | 40 s | **26 s** |
+
+- Drizzle with rejection switched off — the plain, ungated kind — moved across
+  as well, so **every** drizzle mode is now on the fast engine.
+- **SuperPixel is the only remaining option that asks for the slower engine.**
+  The note in Options says so and nothing else.
+- The Rejection descriptions no longer warn that GESD and Linear fit cost you
+  the fast engine, because they no longer do. They now say what each actually
+  costs in time.
+
+Nothing about any image changes — this is speed only, in every case.
+
 ## 1.11.12
 
 **Drizzle now runs on the fast engine — roughly twice as quick.** It was the

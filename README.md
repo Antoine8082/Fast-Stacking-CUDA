@@ -46,12 +46,14 @@ Nearly every option now runs fused: per-pixel inverse-variance weighting,
 autocrop, local normalization, crash-resume and the RCD debayer (the
 default — it roughly halves round-star chroma ringing) are all
 byte-exact with the v1 engine — as is trail rejection, in any combination.
-Defect repair and drizzle run fused too; only SuperPixel and the GESD /
-linear-fit rejection modes still route to v1. Drizzle runs a dedicated
-quality pipeline: per-pixel sigma-clip rejection, satellite-trail masks,
-normalization and autocrop are applied to every drop (legacy ungated
-drizzle remains available by turning those options off, and is the one
-drizzle mode still on v1). No option has a RAM ceiling — anything too
+Defect repair, drizzle in every form, and the GESD and linear-fit
+rejection modes run fused too. **SuperPixel is the only option left that
+routes to v1**, and `fused_v1_reasons()` is the single source of truth for
+that — the engine gate, the GUI warning and a test all read it. Drizzle
+runs a dedicated quality pipeline: per-pixel sigma-clip rejection,
+satellite-trail masks, normalization and autocrop are applied to every
+drop (legacy ungated drizzle remains available by turning those options
+off). No option has a RAM ceiling — anything too
 large to hold in memory streams from disk. `FS_FUSED=0` forces v1;
 `FS_FUSED=1` forces fused at any frame count. Hard limit: 10 000 frames.
 
