@@ -5,6 +5,25 @@ public repo and shows every section newer than the version you are running, so
 each heading must start with `## <version>` and sections must stay in
 descending version order.
 
+## 1.11.2
+
+**The "Slower engine (v1)" warning was still blaming Reject trails.**
+
+If you ticked Reject trails, the options panel told you the run had dropped onto
+the slower engine. It had not — 1.11.0 moved trail rejection onto the fast one
+and the warning was never updated. So for two releases the program argued
+against an option that now costs about 30 seconds on a 1089-frame stack instead
+of roughly doubling it.
+
+Nothing about stacking changes. If you turned Reject trails off because of that
+message, you can turn it back on.
+
+The warning and the engine now read from the same place, so it cannot say one
+thing while the program does another. That had happened twice: SuperPixel was
+missing from the list entirely, and then trail rejection stayed on it after
+moving. A test now checks the claim against the real engine rather than against
+a second copy of the rule.
+
 ## 1.11.1
 
 Two options that were removed from the window some releases ago were still
