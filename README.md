@@ -1,176 +1,313 @@
+<p align="center">
+  <img src="fs-cuda-logo-512.png" alt="FS-CUDA" width="180">
+</p>
+
+[![Download FS-CUDA.exe](https://img.shields.io/badge/Download-FS--CUDA.exe-0078D4?style=for-the-badge&logo=windows&logoColor=white)](https://github.com/Antoine8082/Fast-Stacking-CUDA/raw/main/FS-CUDA.exe)
+[![Télécharger FS-CUDA.exe](https://img.shields.io/badge/Télécharger-FS--CUDA.exe-0078D4?style=for-the-badge&logo=windows&logoColor=white)](https://github.com/Antoine8082/Fast-Stacking-CUDA/raw/main/FS-CUDA.exe)
+
+<p align="center">
+  <img src="screenshot-lrgb-batch.jpg" alt="An LRGB batch finished: three filters stacked and combined into one colour master" width="900">
+  <br>
+  <em>A whole LRGB night in one press — 597 frames, three masters and the combined colour image.</em>
+  <br>
+  <em>Une nuit LRVB complète en une fois — 597 poses, trois maîtres et l'image couleur combinée.</em>
+</p>
+
+<p align="center">
+  <img src="screenshot-frame-selection.jpg" alt="The frame selection window: rejection filters, per-frame measurements and histograms" width="900">
+  <br>
+  <em>Frame selection: every frame measured, filtered and charted before you commit.</em>
+  <br>
+  <em>Sélection des poses : chaque image mesurée, filtrée et tracée avant de valider.</em>
+</p>
+
 # FS-CUDA — Fast Stacking CUDA
 
-Clean-room, GPU-accelerated astrophotography stacker for one-shot-colour (OSC)
-data. A standalone Windows application with no third-party astro-platform
-dependency.
+The fastest possible astrophotography stacker for one-shot-colour (OSC) **and
+monochrome** cameras, from raw light frames to a finished linear master, on your
+NVIDIA GPU. A single Windows executable.
 
-**Goal:** the fastest possible processing at the highest possible image
-quality — from raw light frames to a finished linear master.
+*L'empileur d'astrophotographie le plus rapide possible, pour caméras couleur
+(OSC) **et monochromes** : de vos poses brutes à un maître linéaire terminé, sur
+votre GPU NVIDIA. Un seul exécutable Windows.*
 
-> Proprietary donationware (not open source). Distributed as `FS-CUDA.exe`;
-> see [EULA.txt](EULA.txt) and [docs/DISTRIBUTION.md](docs/DISTRIBUTION.md). This
-> repository is the private development tree; the public release carries only
-> the binary and a user readme.
+*Le manuel complet est disponible en français : **[GUIDE.md](GUIDE.md)**.
+Chaque section ci-dessous est également traduite.*
 
-## v2 fused engine
+> **Proprietary donationware — not open source.** By downloading, installing, or
+> using FS-CUDA you accept the End-User License Agreement shown on first launch
+> (also in `EULA.txt`). If you do not agree, do not install or use it.
+>
+> **Donationware propriétaire — code source fermé.** En téléchargeant, en
+> installant ou en utilisant FS-CUDA, vous acceptez le contrat de licence
+> utilisateur affiché au premier lancement (également dans `EULA.txt`). Si vous
+> n'êtes pas d'accord, n'installez pas et n'utilisez pas le logiciel.
 
-Since v2, stacks of ≥128 frames run on a **fused GPU pipeline**: raw 16-bit
-CFA frames stay RAM-resident (18 MB/frame instead of 108 MB float RGB), are
-read from disk exactly once, and calibration → cosmetic → debayer → warp →
-rejection all execute on the GPU per horizontal band — only finished master
-rows return to the host. Rejection uses an exact radix-select k-th-order
-kernel (measured fastest against sort- and CPU-based alternatives at every
-VRAM-fit configuration). Small stacks (<128 frames) keep the v1 in-memory
-path, which is slightly faster there; both engines produce byte-identical
-masters.
+## What it does
 
-Measured, 1089 × 3008×3008 real frames (RTX 5070 laptop, 64 GB RAM):
+Point it at a folder of raw CFA lights (plus optional darks/flats or master dark/flat), press
+**Stack**, and it produces a deep, linear, 32-bit master with full metadata:
+calibrate → cosmetic → RCD debayer → register (sub-pixel) → local normalize →
+inverse-variance weighted, robustly-rejected integration → optional drizzle,
+autocrop, RGB align and built-in Gaia plate solving. The fused GPU engine holds
+RAM and VRAM **flat** no matter how many frames you stack (up to 10,000) — a
+1089-frame run measured 62% GPU utilisation with steady memory.
 
-| engine | wall time | GPU | notes |
-|---|---|---|---|
-| v1 streaming | 414 s | bursty | disk spill, CPU rejection |
-| **v2 fused** | **158 s** | 100 % sustained | zero spill, ~6.7 GB VRAM, identical master |
 
-Trail rejection used to fall off this engine entirely — the detector needs a
-whole registered frame and the fused pipeline never builds one — so ticking the
-box silently bought you the v1 engine. Since 1.11 it detects in a GPU pre-pass
-and masks per band instead. Measured, 300 × 3008×3008 real frames:
+### Ce que fait le logiciel
 
-| run | v1 engine | fused | master |
-|---|---|---|---|
-| trails | 75.7 s | **35.3 s** | byte-identical |
-| trails + local normalization | 93.7 s | **50.3 s** | byte-identical |
-| no trails (reference point) | — | 25.0 s | — |
+Indiquez-lui un dossier de poses CFA brutes (plus, en option, darks/flats
+ou dark/flat maîtres), appuyez sur **Stack**, et il produit un maître linéaire 32 bits,
+profond et complet en métadonnées : calibration → cosmétique → dématriçage RCD →
+alignement (précision inférieure au pixel) → normalisation locale → intégration
+pondérée par l'inverse de la variance avec rejet robuste → drizzle optionnel,
+rognage automatique, alignement RVB et astrométrie Gaia intégrée. Le moteur GPU
+fusionné garde une consommation mémoire **stable** quel que soit le nombre
+d'images empilées (jusqu'à 10 000) — un traitement de 1089 poses a mesuré 62 %
+d'utilisation du GPU, à mémoire constante.
 
-Nearly every option now runs fused: per-pixel inverse-variance weighting,
-autocrop, local normalization, crash-resume and the RCD debayer (the
-default — it roughly halves round-star chroma ringing) are all
-byte-exact with the v1 engine — as is trail rejection, in any combination.
-Defect repair, drizzle in every form, and the GESD and linear-fit
-rejection modes run fused too. **SuperPixel is the only option left that
-routes to v1**, and `fused_v1_reasons()` is the single source of truth for
-that — the engine gate, the GUI warning and a test all read it. Drizzle
-runs a dedicated quality pipeline: per-pixel sigma-clip rejection,
-satellite-trail masks, normalization and autocrop are applied to every
-drop (legacy ungated drizzle remains available by turning those options
-off). No option has a RAM ceiling — anything too
-large to hold in memory streams from disk. `FS_FUSED=0` forces v1;
-`FS_FUSED=1` forces fused at any frame count. Hard limit: 10 000 frames.
 
-## Pipeline (OSC)
+## Monochrome cameras and LRGB
 
-Input: a folder of raw light frames + a master dark + a master flat.
-Output: one master image (32-bit float, linear, full metadata preserved).
+Tick **Mono / LRGB frames** and nothing is demosaiced: the master stays a single
+channel at full sensor resolution.
 
-1. **Read FITS** — 16/32-bit, all acquisition metadata kept.
-2. **Calibrate** — dark subtract (optional dark scaling), flat divide.
-3. **Cosmetic correction** — hot/cold pixel repair (optional).
-4. **Linear defect correction** — column/row defects (optional).
-5. **Debayer** — RCD (default; smooth gradient-weighted green, rings less on
-   star cores) or SuperPixel (one RGB pixel per 2x2 cell, no interpolation —
-   measured 36% deeper on faint extended detail at matched scale). Mono sensors
-   skip this entirely and stay single-channel.
-6. **Measure** — FWHM, eccentricity, SNR / PSF weight, noise per frame.
-7. **Frame selection** — interactive table + charts; keep/reject.
-8. **Register** — star detect → triangle match → RANSAC affine →
-   **sub-pixel refinement** → warp; optional thin-plate-spline distortion
-   correction.
-9. **Local normalization** — sky-gradient model with star-core protection.
-10. **Integration** — **inverse-variance weighted**, robust rejection
-    (winsorized sigma / GESD) with dedicated **satellite-trail rejection**.
-11. **Drizzle / Bayer drizzle** — optional (undersampled, well-dithered sets).
-12. **Autocrop** — optional.
-13. **Plate solve** — built-in Gaia DR3 solver (optional; WCS in header).
-14. **RGB alignment** — optional.
-15. **Write FITS master** — 32-bit float, linear, metadata + processing history.
+Tick **LRGB batch** as well and every filter is stacked in one press, writing
+`<name>_R.fits`, `<name>_G.fits`, `<name>_B.fits` (and `_L` when you shoot
+luminance). Choose how your frames are organised:
 
-## Architecture
+- **A folder per filter** — one lights folder and one flat per filter, with a
+  single shared Darks row. Darks do not depend on the filter; flats do, because
+  dust shadows and vignetting move with it.
+- **One folder, split by FITS `FILTER` header** — for a session captured
+  straight into a single directory. Each frame's `FILTER` card decides its
+  channel, the folder is searched recursively, and calibration frames are
+  skipped by their `IMAGETYP`. Press **Scan filters** to see the split before
+  committing to a long run. A filter that is not recognised is **reported, never
+  guessed** — silently treating Ha as red would give you a plausible, wrong
+  image.
 
-- `core/` — C++/CUDA stacking engine (CPU fallback). Pure compute; no UI or
-  platform dependency.
-- `io/` — FITS read/write, metadata-preserving.
-- `app/` — dead-simple native Windows GUI (Dear ImGui + GLFW), including the
-  interactive frame-selection view.
-- `tests/` — CPU-vs-CUDA oracle checks + known-answer tests.
+Tick **Combine to RGB** and the finished masters are registered onto a common
+frame and written as one colour image `<name>_RGB.fits`. L is applied as
+luminance when present. Channel backgrounds are matched by offset, the edges
+where the channels do not overlap are trimmed, and the per-channel FWHM is
+reported so you are told when the channels differ in sharpness. **The result is
+linear and registered but NOT colour-calibrated**: making red mean red needs
+photometry against a star catalogue, so do that in your processing software.
 
-## Principles
+Measured on a real 597-frame session (R 201 · G 202 · B 194, 4656 × 3520 mono,
+eight nights): **1 min 16 s** for three masters plus the combined RGB, every
+frame used. Monochrome runs on the fused GPU engine, like colour: the band
+kernels carry a single channel and skip the demosaic, which also lets each band
+be about three times taller for the same video memory.
 
-- **32-bit float, linear light, end to end.** No hidden precision loss.
-- **Bounded memory.** Frames stream through; RAM and VRAM stay flat no matter
-  how many frames are stacked.
-- **Correct before clever.** Inverse-variance weighting and sub-pixel
-  registration are the two levers that decide final quality — both are built
-  in from the start.
-- **Clean-room.** Every algorithm is implemented from published literature
-  (cited in the code). No code is derived from any third-party astro platform.
+### Caméras monochromes et LRVB
 
-## Build
+Cochez **Mono / LRGB frames** : plus aucun dématriçage, le maître reste en un
+seul canal à la pleine résolution du capteur.
 
-Windows x64, CUDA (optional — CPU fallback builds without it), CMake ≥ 3.18,
-C++17.
+Cochez également **LRGB batch** et tous les filtres sont empilés en une seule
+fois, produisant `<nom>_R.fits`, `<nom>_G.fits`, `<nom>_B.fits` (et `_L` si vous
+photographiez la luminance). Choisissez l'organisation de vos fichiers :
 
-```powershell
-cmake -B build -DCMAKE_BUILD_TYPE=Release
-cmake --build build --config Release
-```
+- **Un dossier par filtre** — un dossier de poses et un flat par filtre, avec une
+  seule ligne Darks partagée. Les darks ne dépendent pas du filtre ; les flats
+  si, car les poussières et le vignettage suivent le filtre.
+- **Un seul dossier, réparti par l'en-tête FITS `FILTER`** — pour une session
+  enregistrée directement dans un seul répertoire. La carte `FILTER` de chaque
+  pose détermine son canal, le dossier est parcouru récursivement, et les images
+  de calibration sont ignorées grâce à leur `IMAGETYP`. Appuyez sur **Scan
+  filters** pour vérifier la répartition avant de lancer un long traitement. Un
+  filtre non reconnu est **signalé, jamais deviné** : traiter silencieusement du
+  Ha comme du rouge donnerait une image plausible et fausse.
 
-### Run
+Cochez **Combine to RGB** et les maîtres obtenus sont alignés sur une référence
+commune puis écrits en une seule image couleur `<nom>_RGB.fits`. La luminance est
+appliquée lorsqu'elle existe. Les fonds de ciel sont ajustés par décalage, les
+bords où les canaux ne se recouvrent pas sont rognés, et la FWHM de chaque canal
+est indiquée afin de vous avertir si leur netteté diffère. **Le résultat est
+linéaire et aligné mais PAS étalonné en couleur** : pour que le rouge signifie
+vraiment le rouge, il faut une photométrie sur un catalogue d'étoiles — faites-le
+dans votre logiciel de traitement.
 
-`fs_stack` stacks a folder of raw CFA lights into a linear RGB master;
-`fs_synth` writes a synthetic test set to try it on.
+Mesuré sur une session réelle de 597 poses (R 201 · G 202 · B 194, 4656 × 3520
+monochrome, huit nuits) : **1 min 16 s** pour les trois maîtres et l'image RVB
+combinée, toutes les poses utilisées. Le monochrome utilise le moteur GPU
+fusionné, comme la couleur : les noyaux de bande ne portent qu'un seul canal et
+sautent le dématriçage, ce qui permet aussi des bandes environ trois fois plus
+hautes à mémoire vidéo égale.
 
-```powershell
-build\Release\fs_synth.exe data --frames 10
-build\Release\fs_stack.exe data\lights --dark data\dark.fits --out master.fits
-```
+## User manual / Manuel utilisateur
 
-`fs_stack <lights-dir | light.fits...> [--dark F] [--flat F] [--out F]
-[--pattern RGGB] [--method rcd|ha|superpixel] [--weight noise|psf]
-[--detect-sigma X] [--no-cosmetic]`
+**[GUIDE.md](GUIDE.md)** is the complete manual, in English and French. It
+covers how the pipeline works, every option one by one, drizzle and dithering,
+plate solving, reading the results, and troubleshooting.
 
-### GUI
+Safe defaults for deep-sky OSC (already the defaults in the app):
+**RCD · Winsorized Sigma · Noise (1/var)**, with every repair option ticked.
+Change them only for the specific reasons given in the guide.
 
-A Dear ImGui + GLFW front end (`fs_gui`) is opt-in — it fetches ImGui and GLFW
-at configure time:
+**[GUIDE.md](GUIDE.md)** est le manuel complet, en anglais et en français. Il
+explique le fonctionnement du pipeline, chaque option une par une, le drizzle et
+le dithering, l'astrométrie, la lecture des résultats et le dépannage.
 
-```powershell
-cmake -B build -DCMAKE_BUILD_TYPE=Release -DFS_BUILD_GUI=ON
-cmake --build build --config Release --target fs_gui
-```
+Réglages sûrs pour le ciel profond OSC (déjà les valeurs par défaut) :
+**RCD · Winsorized Sigma · Noise (1/var)**, avec toutes les options de
+réparation cochées. Ne les changez que pour les raisons précises données dans le
+guide.
 
-Pick a lights folder (plus optional master dark/flat), press Stack, and view
-the linear master with an interactive asinh screen stretch. The pipeline runs
-on a worker thread so the UI stays responsive.
+## Requirements
 
-## Status
+- Windows 10/11, 64-bit.
+- A CPU with **AVX2** (Intel 2013 or newer, AMD 2015 or newer). The program says
+  so clearly and exits if yours does not support it.
+- An NVIDIA GPU, **GeForce GTX 16-series / RTX 20-series or newer** (Turing or
+  later). Older or non-NVIDIA machines run a slower CPU-only fallback.
+- The Microsoft Visual C++ Redistributable (x64) — bundled by the installer.
+- No CUDA toolkit install needed; the runtime is built in.
 
-Pipeline runs end to end: FITS I/O, calibration (dark/flat + CFA-aware
-cosmetic), debayer (SuperPixel / RCD), per-frame measurement
-(noise, star detection, FWHM/eccentricity/SNR), registration (triangle-match
-star correspondence → RANSAC affine → 2nd-order distortion → bicubic warp),
-and inverse-variance weighted, winsorized-sigma integration. `stack()` ties
-them together: raw CFA lights (+ master dark/flat) → one linear RGB master.
-All stages are covered by known-answer tests (`fs_tests`).
+### Configuration requise
 
-**GPU acceleration**: calibrate, debayer, and integrate run on CUDA when a
-device is present, each validated bit-for-bit against the CPU path by an
-oracle test (`--fmad=false`). The build falls back to a CPU-only path with no
-toolkit. Calibrate+debayer are fused and resident (dark/flat uploaded once);
-integrate is tiled to keep VRAM bounded. On an RTX 5070 a 100-frame 3008×3008
-stack runs in ~13 s (≈15× the original single-threaded CPU time).
+- Windows 10/11, 64 bits.
+- Un processeur gérant l'**AVX2** (Intel 2013 ou plus récent, AMD 2015 ou plus
+  récent). Le programme l'indique clairement et s'arrête si ce n'est pas le cas.
+- Un GPU NVIDIA, **GeForce GTX série 16 / RTX série 20 ou plus récent**
+  (Turing ou ultérieur). Les machines plus anciennes ou non NVIDIA utilisent un
+  repli logiciel plus lent, uniquement sur processeur.
+- Le Microsoft Visual C++ Redistributable (x64) — fourni par l'installeur.
+- Aucune installation du toolkit CUDA n'est nécessaire ; l'exécution est
+  intégrée.
 
-Validated on real IMX533 OSC data: 100 lights + 72 darks + 41 flats → a deep
-linear master, noise reduced ~10× (√100), stars sharp.
+## Free trial and donation
 
-**Optional stages** (off by default unless noted): linear column/row defect
-correction, automatic frame selection, sub-pixel registration refinement (on),
-2nd-order distortion correction, local (polynomial) background normalization,
-GESD rejection, per-pixel inverse-variance weighting, satellite/plane trail
-rejection, autocrop, RGB channel alignment, drizzle, and built-in Gaia plate
-solving (Sesame target resolve + Gaia DR3 cone fetch, or a local Gaia CSV;
-no external solver needed). Each is a checkbox/flag in the GUI
-and `fs_stack`.
+FS-CUDA is free to try: **10 fully functional exports**, no time limit. After
+that a short donation screen appears at startup, exported FITS files carry a
+watermark in their header, and the Phase-2 quality options lock (Normalize,
+Autocrop, RGB align, Defect-tolerant per-pixel weighting, Reject trails and
+Drizzle). Basic stacking keeps working.
 
-**GUI**: `fs_gui` (Dear ImGui + GLFW, Windows 11 theme) — pick folders, stack
-on a worker thread, view the master with an interactive STF stretch. Build with
-`-DFS_BUILD_GUI=ON`.
+> # ⭐ Donate — from **2 EURO**
+> ### 👉 **https://paypal.me/Antoine8082**
+>
+> **A donation of at least 2 EURO unlocks FS-CUDA permanently on your machine:**
+> no startup screen, no watermark, and the full Phase-2 quality engine.
+>
+> FS-CUDA is developed by one person. If it saves you time, please support it.
+
+Then, to receive your key:
+
+1. Donate: **https://paypal.me/Antoine8082** — **minimum 2 EURO**
+2. In FS-CUDA, open **Enter license** and copy your **Machine ID**
+   (`HWID-XXXX-XXXX`).
+3. Send that Machine ID and your PayPal email to the developer at
+   **fscuda8082@gmail.com**.
+4. Paste the license key you receive back — done, permanently, on this machine.
+
+Your license is bound to your hardware; please do not share it. If you change
+your motherboard or CPU, contact the developer for a reset.
+
+### Essai gratuit et don
+
+FS-CUDA est libre d'essai : **10 exports pleinement fonctionnels**, sans limite
+de durée. Ensuite, un court écran de don apparaît au démarrage, les fichiers
+FITS exportés portent un filigrane dans leur en-tête, et les options de qualité
+Phase 2 se verrouillent (Normalize, Autocrop, RGB align, pondération par pixel,
+Reject trails et Drizzle). L'empilement de base continue de fonctionner.
+
+> # ⭐ Faire un don — à partir de **2 EURO**
+> ### 👉 **https://paypal.me/Antoine8082**
+>
+> **Un don d'au moins 2 EURO déverrouille FS-CUDA définitivement sur votre
+> machine :** plus d'écran de démarrage, plus de filigrane, et le moteur de
+> qualité Phase 2 au complet.
+>
+> FS-CUDA est développé par une seule personne. S'il vous fait gagner du temps,
+> merci de le soutenir.
+
+Ensuite, pour recevoir votre clé :
+
+1. Faites un don : **https://paypal.me/Antoine8082** — **2 EURO minimum**
+2. Dans FS-CUDA, ouvrez **Enter license** et copiez votre **Machine ID**
+   (`HWID-XXXX-XXXX`).
+3. Envoyez ce Machine ID et l'adresse e-mail de votre PayPal au développeur à
+   **fscuda8082@gmail.com**.
+4. Collez la clé de licence reçue en retour — c'est définitif, sur cette
+   machine.
+
+Votre licence est liée à votre matériel ; merci de ne pas la partager. Si vous
+changez de carte mère ou de processeur, contactez le développeur pour une
+réinitialisation.
+
+## Benchmark
+
+Measured on **FS-CUDA 1.11.1**, on a Lenovo Yoga Pro 9 16IAH10 — Core Ultra 9
+285H (16 threads), 64 GB RAM, **RTX 5070 Laptop** — stacking **1089 real light
+frames of 3008 × 3008 px** (OSC/CFA, 16-bit) from an internal NVMe SSD. Times
+are the full run: reading every frame, registering, integrating and writing the
+master.
+
+| Settings | Time |
+|---|---|
+| Normalize + Autocrop + RGB align + Per-pixel weight<br>(RCD debayer, Winsorized Sigma, Noise weighting) | **3 min 11 s** |
+| Same, plus Reject trails | **3 min 43 s** |
+
+Memory use stays flat regardless of how many frames you stack.
+
+**Reject trails now costs about 30 seconds on this stack, not a change of
+engine.** Until 1.11 it fell back to the slower CPU path and roughly doubled the
+run; it stays on the GPU pipeline and produces the same master as before.
+
+Drizzle and Defect fix still use the CPU path — their results cannot yet be
+reproduced bit-for-bit on the GPU — and are substantially slower. Leave them off
+unless you need them.
+
+### Performances mesurées
+
+Mesuré sur **FS-CUDA 1.11.1**, sur un Lenovo Yoga Pro 9 16IAH10 — Core Ultra 9
+285H (16 threads), 64 Go de RAM, **RTX 5070 Laptop** — pour l'empilement de
+**1089 poses réelles de 3008 × 3008 px** (CFA/OSC, 16 bits) depuis un SSD NVMe
+interne. Les durées correspondent au traitement complet : lecture de chaque
+pose, alignement, intégration et écriture du maître final.
+
+| Réglages | Durée |
+|---|---|
+| Normalize + Autocrop + RGB align + pondération par pixel<br>(dématriçage RCD, Winsorized Sigma, pondération Noise) | **3 min 11 s** |
+| Idem, plus Reject trails | **3 min 43 s** |
+
+La consommation mémoire reste stable quel que soit le nombre d'images.
+
+**Reject trails coûte désormais environ 30 secondes sur cet empilement, et non
+un changement de moteur.** Jusqu'à la 1.11, l'option basculait sur le chemin CPU
+et doublait à peu près la durée ; elle reste maintenant sur le pipeline GPU et
+produit le même maître qu'avant.
+
+Le drizzle et Defect fix utilisent encore le chemin CPU — leurs résultats ne
+peuvent pas encore être reproduits au bit près sur le GPU — et sont nettement
+plus lents. Laissez-les désactivés si vous n'en avez pas besoin.
+
+## Updates
+
+**Check for updates** in the program compares your version with the latest
+release and updates the executable in place. **Your license is preserved.**
+
+### Mises à jour
+
+**Check for updates** dans le programme compare votre version à la dernière
+publiée et met à jour l'exécutable sur place. **Votre licence est conservée.**
+
+## Support
+
+Questions, license requests and hardware-change resets: contact the developer
+via fscuda8082@gmail.com.
+
+### Assistance
+
+Questions, demandes de licence et réinitialisation après changement de matériel :
+contactez le développeur à fscuda8082@gmail.com.
+
+---
+
+*FS-CUDA is provided "as is", without warranty of any kind. See `EULA.txt`.*
+
+*FS-CUDA est fourni « en l'état », sans garantie d'aucune sorte. Voir
+`EULA.txt`.*
