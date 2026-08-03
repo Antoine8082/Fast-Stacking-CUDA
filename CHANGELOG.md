@@ -5,6 +5,36 @@ public repo and shows every section newer than the version you are running, so
 each heading must start with `## <version>` and sections must stay in
 descending version order.
 
+## 1.11.0
+
+**Trail rejection is about twice as fast, and produces exactly the same master.**
+
+Nothing about the trails themselves has changed — the same frames are flagged,
+the same pixels masked, and the resulting file is byte-for-byte identical to the
+one 1.10.0 produced. This release is purely about what ticking the box cost you.
+
+- **"Reject trails" no longer drops the whole run onto the slower engine.**
+  FS-CUDA has two stacking engines, and the fast one could not do trail
+  rejection, so switching the option on quietly switched engines too. Measured
+  on 300 real frames: **75.7 s → 35.3 s**. With local normalization as well,
+  **93.7 s → 50.3 s**.
+
+  The fast engine never builds a whole registered frame in memory — that is why
+  it is fast, and why it could not run a detector that needs one. It now warps
+  each frame through the same GPU path it already uses for stacking, hands that
+  to the unchanged detector, and keeps only the list of pixels to mask.
+
+- **Local normalization + trail rejection now works on the fast engine too.**
+  This combination was the last one still forced onto the slow path.
+
+- Three further speedups inside the new detection pass, worth 20.9 s → 9.2 s of
+  it on those 300 frames: recycled frame buffers instead of allocating and
+  clearing 32 GB of memory that was immediately overwritten, page-locked
+  transfers, and copying back only the brightness the detector actually reads
+  rather than all three colour channels.
+
+If you do not use trail rejection, this release changes nothing for you.
+
 ## 1.10.0
 
 Trail rejection was rebuilt. On the test data it went from finding **none** of
