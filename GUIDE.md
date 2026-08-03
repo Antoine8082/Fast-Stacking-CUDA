@@ -53,9 +53,11 @@ window switches a stage of it on or off:
 5. **Register** — match stars between frames and align each onto the reference
    with sub-pixel accuracy.
 6. **Normalize** — match every frame's sky background to the reference.
-7. **Reject and integrate** — combine the frames, discarding per-pixel outliers
-   (satellites, cosmic rays, planes) as it averages.
-8. **Post** — trail cleanup, autocrop, RGB alignment, optional drizzle.
+7. **Reject trails** — find satellite and aircraft trails on each registered
+   frame and mark those pixels, before anything is combined.
+8. **Reject and integrate** — combine the frames, discarding per-pixel outliers
+   (cosmic rays, remaining hits) as it averages.
+9. **Post** — autocrop, RGB alignment, optional drizzle.
 
 The chain runs on your GPU wherever that is faster, and streams frames through
 memory, so the number of frames is not limited by your RAM.
@@ -132,7 +134,7 @@ those pixels instead. Nothing is invented, and **no frame is lost** — on a rea
 2,600× less data for the same trails removed, and recovered 11 stars in the
 master. *Leave on.*
 
-Three things keep it from removing what you want to keep:
+Four things keep it from removing what you want to keep:
 
 - **Diffraction spikes are spared.** A spike radiates *from a star*, a satellite
   does not, so lines passing through a bright star are left alone. Brightness
@@ -144,6 +146,11 @@ Three things keep it from removing what you want to keep:
   the measured FWHM rather than being fixed.
 - **A real object, present in every frame, is never touched** — it cancels
   against the reference and is never even considered.
+- **Dithering is not mistaken for a trail.** Every sub stops covering the
+  reference somewhere, and that edge is a dead straight line across the whole
+  frame — which is exactly what a satellite looks like. Frames used to be
+  flagged for their own registration border; the edge and a margin around it are
+  now excluded.
 
 After a stack the result panel reports how many frames carried a trail and how
 many pixels were masked. Nothing is dropped, so the "Rejected" count stays at
@@ -421,8 +428,9 @@ with it on and compare — the failure mode is obvious.
 ## 5. While it runs, and reading the result
 
 The **stage** under the progress bar shows what the pipeline is doing:
-*Measuring frames → Registering frames → Integrating → Rejecting trails →
-Drizzle accumulate → Autocropping.*
+*Reading & measuring → Registering frames → Rejecting trails → Integrating →
+Drizzle accumulate → Autocropping.* The fast engine reports fewer of these,
+because it does several of them at once rather than one after another.
 
 **Abort** stops at the next safe point. With *Resume after interruption* on,
 pressing **Stack** again continues rather than restarting.
@@ -644,7 +652,7 @@ cela a écarté 18 608 pixels au lieu de trois poses entières, soit environ 2 6
 fois moins de données pour les mêmes traînées supprimées, et récupéré 11 étoiles
 dans le maître. *À laisser activé.*
 
-Trois garde-fous l'empêchent de retirer ce que vous voulez garder :
+Quatre garde-fous l'empêchent de retirer ce que vous voulez garder :
 
 - **Les aigrettes de diffraction sont épargnées.** Une aigrette rayonne *depuis
   une étoile*, pas un satellite : les lignes passant par une étoile brillante
@@ -656,6 +664,11 @@ Trois garde-fous l'empêchent de retirer ce que vous voulez garder :
   s'adapte à la FWHM mesurée au lieu d'être fixe.
 - **Un objet réel, présent sur toutes les images, n'est jamais touché** — il
   s'annule face à la référence et n'est même pas envisagé.
+- **Le dithering n'est pas pris pour une traînée.** Chaque pose cesse de couvrir
+  la référence quelque part, et ce bord est une ligne parfaitement droite en
+  travers de toute l'image — exactement ce à quoi ressemble un satellite. Des
+  poses étaient auparavant signalées à cause de leur propre bord de recalage ; ce
+  bord et une marge autour sont désormais exclus.
 
 Après un empilement, le panneau de résultat indique combien de poses portaient
 une traînée et combien de pixels ont été masqués. Rien n'étant supprimé, le
@@ -957,8 +970,9 @@ l'échec est visible immédiatement.
 ## 5. Pendant le traitement, et lecture du résultat
 
 L'**étape** sous la barre de progression indique ce que fait le pipeline :
-*Measuring frames → Registering frames → Integrating → Rejecting trails →
-Drizzle accumulate → Autocropping.*
+*Reading & measuring → Registering frames → Rejecting trails → Integrating →
+Drizzle accumulate → Autocropping.* Le moteur rapide en affiche moins, car il en
+mène plusieurs de front au lieu de les enchaîner.
 
 **Abort** arrête au prochain point sûr. Avec *Resume after interruption* activé,
 appuyer de nouveau sur **Stack** reprend au lieu de tout recommencer.

@@ -5,6 +5,24 @@ public repo and shows every section newer than the version you are running, so
 each heading must start with `## <version>` and sections must stay in
 descending version order.
 
+## 1.11.7
+
+**The manual described trail rejection as it worked two releases ago.** Corrected,
+in both languages.
+
+- The pipeline list put trail rejection *after* integration. It runs *before* —
+  which is the whole reason a masked pixel can be supplied by your other frames
+  rather than leaving a hole.
+- The stage list under the progress bar had the same inversion, and named stages
+  the fast engine does not show. It reports fewer because it does several at
+  once.
+- "Three things keep it from removing what you want to keep" is now four. The
+  fourth is new in 1.11.6: dithering is no longer mistaken for a trail. If you
+  noticed frames being flagged before and not now, that is why.
+
+No change to stacking. If you read the manual through the **Manual** button, this
+is the release that updates it.
+
 ## 1.11.6
 
 **If you stack monochrome or narrowband frames with Reject trails on, it failed
