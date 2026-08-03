@@ -5,6 +5,23 @@ public repo and shows every section newer than the version you are running, so
 each heading must start with `## <version>` and sections must stay in
 descending version order.
 
+## 1.11.1
+
+Two options that were removed from the window some releases ago were still
+described in the manual as though you could pick them, and were still reachable
+from the command line. Both are now gone entirely, along with every mention of
+them.
+
+- **The second debayer method** — retired in 1.5.13 because RCD beat it on every
+  measure, but the manual still listed it beside RCD and SuperPixel.
+- **The sharper resampling option** — retired for the same reason. Measured on
+  900 real frames it sharpened nothing (FWHM 9.34 against the default's 9.31)
+  while costing stars and adding noise.
+
+Your masters are unchanged: both were off by default and the code that remains
+produces bit-identical output — every engine-parity check still reads exactly
+zero. Existing settings files still load.
+
 ## 1.11.0
 
 **Trail rejection is about twice as fast, and produces exactly the same master.**
@@ -521,11 +538,11 @@ throwing away far less of your night.
 - The warning that names the options costing you the GPU engine was missing
   SuperPixel, so a stack running slowly because of the debayer blamed only the
   other settings.
-- **Hamilton-Adams and Lanczos-3 removed.** Both were choices that cannot win.
-  RCD beats Hamilton-Adams on every count, and Lanczos-3 — offered as "sharper"
+- **Two options removed.** Both were choices that cannot win. RCD beats the
+  older debayer on every count, and the sharper resampling option — offered as "sharper"
   — measured no sharpening at all (FWHM 9.34 against the default's 9.31) while
   costing stars (531 against 554) and noise (1.91 against 1.79). Existing
-  settings files still load; a stored Hamilton-Adams becomes RCD.
+  settings files still load; a stored value for either resolves to the default.
 - The autocrop coverage slider sat under Defect fix, two rows below the box it
   belongs to. It is now directly under Autocrop.
 - **The preview stretch is fixed at its gentlest setting** and the Shadows and

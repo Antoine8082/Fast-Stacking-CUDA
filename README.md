@@ -240,59 +240,50 @@ réinitialisation.
 
 ## Benchmark
 
-Measured on a Lenovo Yoga Pro 9 16IAH10 — Core Ultra 9 285H (16 threads),
-64 GB RAM, **RTX 5070 Laptop** — stacking **1089 real light frames of
-3008 × 3008 px** (OSC/CFA, 16-bit), read from an internal NVMe SSD, with a
-master dark and master flat built from raw calibration folders in the same run.
+Measured on **FS-CUDA 1.11.1**, on a Lenovo Yoga Pro 9 16IAH10 — Core Ultra 9
+285H (16 threads), 64 GB RAM, **RTX 5070 Laptop** — stacking **1089 real light
+frames of 3008 × 3008 px** (OSC/CFA, 16-bit) from an internal NVMe SSD. Times
+are the full run: reading every frame, registering, integrating and writing the
+master.
 
-| Settings | Engine | Time |
-|---|---|---|
-| Normalize + Autocrop + RGB align + Per-pixel weight<br>(RCD debayer, Winsorized Sigma, Noise weighting) | fused GPU | **4 min 22 s** |
-| Same, plus Bayer Drizzle 2× and Defect fix | CPU streaming | **10 min 37 s** |
-| Same, plus Reject trails | CPU streaming | **17 min 17 s** |
+| Settings | Time |
+|---|---|
+| Normalize + Autocrop + RGB align + Per-pixel weight<br>(RCD debayer, Winsorized Sigma, Noise weighting) | **3 min 11 s** |
+| Same, plus Reject trails | **3 min 43 s** |
 
-Memory use stays flat regardless of how many frames you stack. The first
-configuration measured **62% GPU utilisation**, not full saturation — the
-remaining headroom is a target for future work, not a claim already met.
-Times are the full run — reading every frame, building the calibration
-masters, registering, integrating and writing the master.
+Memory use stays flat regardless of how many frames you stack.
 
-*These timings were measured on the 1.5 series. Later releases changed frame
-rejection and weighting, so treat them as indicative rather than exact for the
-current version.*
+**Reject trails now costs about 30 seconds on this stack, not a change of
+engine.** Until 1.11 it fell back to the slower CPU path and roughly doubled the
+run; it stays on the GPU pipeline and produces the same master as before.
 
-**Drizzle and Reject trails are the expensive options**, and they force the
-CPU path because their results cannot be reproduced bit-exactly on the GPU.
-Leave them off unless you need them and the run is roughly 4× faster.
+Drizzle and Defect fix still use the CPU path — their results cannot yet be
+reproduced bit-for-bit on the GPU — and are substantially slower. Leave them off
+unless you need them.
 
 ### Performances mesurées
 
-Mesuré sur un Lenovo Yoga Pro 9 16IAH10 — Core Ultra 9 285H (16 threads),
-64 Go de RAM, **RTX 5070 Laptop** — pour l'empilement de **1089 poses réelles
-de 3008 × 3008 px** (CFA/OSC, 16 bits), lues depuis un SSD NVMe interne, avec
-un dark maître et un flat maître construits pendant le même traitement.
+Mesuré sur **FS-CUDA 1.11.1**, sur un Lenovo Yoga Pro 9 16IAH10 — Core Ultra 9
+285H (16 threads), 64 Go de RAM, **RTX 5070 Laptop** — pour l'empilement de
+**1089 poses réelles de 3008 × 3008 px** (CFA/OSC, 16 bits) depuis un SSD NVMe
+interne. Les durées correspondent au traitement complet : lecture de chaque
+pose, alignement, intégration et écriture du maître final.
 
-| Réglages | Moteur | Durée |
-|---|---|---|
-| Normalize + Autocrop + RGB align + pondération par pixel<br>(dématriçage RCD, Winsorized Sigma, pondération Noise) | GPU fusionné | **4 min 22 s** |
-| Idem, plus Bayer Drizzle 2× et Defect fix | CPU streaming | **10 min 37 s** |
-| Idem, plus Reject trails | CPU streaming | **17 min 17 s** |
+| Réglages | Durée |
+|---|---|
+| Normalize + Autocrop + RGB align + pondération par pixel<br>(dématriçage RCD, Winsorized Sigma, pondération Noise) | **3 min 11 s** |
+| Idem, plus Reject trails | **3 min 43 s** |
 
-La consommation mémoire reste stable quel que soit le nombre d'images. La
-première configuration a mesuré **62 % d'utilisation du GPU**, et non une
-saturation complète : la marge restante est un objectif de travail, pas un
-résultat déjà atteint. Les durées correspondent au traitement complet : lecture
-de chaque pose, construction des maîtres de calibration, alignement, intégration
-et écriture du maître final.
+La consommation mémoire reste stable quel que soit le nombre d'images.
 
-*Ces durées ont été mesurées sur la série 1.5. Les versions suivantes ont modifié
-le rejet des poses et la pondération : considérez-les comme indicatives plutôt
-qu'exactes pour la version actuelle.*
+**Reject trails coûte désormais environ 30 secondes sur cet empilement, et non
+un changement de moteur.** Jusqu'à la 1.11, l'option basculait sur le chemin CPU
+et doublait à peu près la durée ; elle reste maintenant sur le pipeline GPU et
+produit le même maître qu'avant.
 
-**Le drizzle et Reject trails sont les options coûteuses** : elles imposent le
-chemin CPU, car leurs résultats ne peuvent pas être reproduits au bit près sur
-le GPU. Laissez-les désactivées si vous n'en avez pas besoin — le traitement
-est alors environ 4× plus rapide.
+Le drizzle et Defect fix utilisent encore le chemin CPU — leurs résultats ne
+peuvent pas encore être reproduits au bit près sur le GPU — et sont nettement
+plus lents. Laissez-les désactivés si vous n'en avez pas besoin.
 
 ## Updates
 

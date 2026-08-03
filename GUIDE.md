@@ -175,11 +175,6 @@ it reveals the LRGB batch options. See the next section.
 **Abort** restarts from where it stopped instead of from scratch. Costs almost
 nothing. *Leave on.*
 
-**Lanczos-3 resampling** — a sharper interpolation for registration, slightly
-noisier, and with **no effect when drizzling** (drizzle never interpolates).
-*Leave off* unless you are not drizzling and want maximum sharpness at some cost
-in noise.
-
 ### Monochrome cameras and LRGB
 
 Tick **Mono / LRGB frames** for a monochrome camera with a filter wheel. Nothing
@@ -337,11 +332,6 @@ Your sensor sees one colour per pixel; debayering reconstructs the other two.
 - **RCD** *(default, best all-round)* — Ratio-Corrected Demosaicing. Handles star
   edges cleanly and roughly halves the colour fringing around bright stars
   compared with simpler methods. Use this unless you have a reason not to.
-- **Hamilton-Adams** — classic edge-directed interpolation. Slightly faster, a
-  little more colour ringing on hard star edges. **Not offered in the program**:
-  RCD beat it on every measure, so the choice was removed rather than left as a
-  worse answer. Still available on the command line as `--method ha` if you need
-  to reproduce an older stack.
 - **SuperPixel** — combines each 2×2 Bayer group into one RGB pixel. **No
   interpolation at all**, so no colour artefacts — but the image is **half the
   width and height**. Useful on heavily oversampled setups, or when you want
@@ -698,11 +688,6 @@ enregistré. S'exécute à l'**enregistrement**. Voir §6.
 coupure de courant ou **Abort** repartent du point d'arrêt au lieu de tout
 recommencer. Coût quasi nul. *À laisser activé.*
 
-**Lanczos-3 resampling** — interpolation plus piquée pour l'alignement, un peu
-plus bruitée, et **sans effet en drizzle** (le drizzle n'interpole jamais). *À
-laisser désactivé*, sauf si vous ne drizzlez pas et voulez un maximum de piqué au
-prix d'un peu de bruit.
-
 ### Caméras monochromes et LRVB
 
 Cochez **Mono / LRGB frames** pour une caméra monochrome avec roue à filtres.
@@ -879,12 +864,6 @@ deux autres.
   proprement les bords d'étoiles et réduit d'environ moitié les franges colorées
   autour des étoiles brillantes par rapport aux méthodes plus simples. À utiliser
   sauf raison contraire.
-- **Hamilton-Adams** — interpolation directionnelle classique. Un peu plus
-  rapide, un peu plus de halo coloré sur les bords d'étoiles francs. **Non
-  proposé dans le programme** : RCD l'emporte sur tous les critères, le choix a
-  donc été retiré plutôt que laissé comme une moins bonne réponse. Reste
-  accessible en ligne de commande via `--method ha` si vous devez reproduire un
-  empilement ancien.
 - **SuperPixel** — combine chaque groupe de Bayer 2×2 en un pixel RVB. **Aucune
   interpolation**, donc aucun artefact de couleur — mais l'image fait **la moitié
   de la largeur et de la hauteur**. Utile sur les montages très
