@@ -5,6 +5,34 @@ public repo and shows every section newer than the version you are running, so
 each heading must start with `## <version>` and sections must stay in
 descending version order.
 
+## 1.11.6
+
+**If you stack monochrome or narrowband frames with Reject trails on, it failed
+outright. Fixed.**
+
+Ticking both "Mono / LRGB frames" and "Reject trails" ended the run with
+
+    error: debayer: called with DebayerMethod::None (mono)
+
+on any set of 16 frames or more — which is every real filter set. It has been
+broken since 1.11.0, when trail rejection moved onto the fast engine. Colour
+frames were never affected. If you hit this, nothing was wrong with your data.
+
+**Trail rejection no longer flags a frame for having moved.**
+
+Your subs are dithered, so each one stops covering the reference somewhere, and
+that edge is a perfectly straight line running the full width of the sensor —
+which is exactly what a satellite looks like to the detector. Frames were being
+flagged for their own registration border, with tens of thousands of pixels
+masked along it.
+
+Measured on 1089 real frames: **20 frames and 213,106 pixels masked becomes 16
+and 113,092**. On a 200-frame subset, both flagged frames were the border and
+neither is flagged now. The pixels involved sit at the very edge of the field,
+where coverage is lowest and Autocrop usually trims them anyway, so masters
+barely move — but the count of frames "carrying a trail" was largely counting
+dither, and is now honest.
+
 ## 1.11.5
 
 **Runs with both Normalize and Reject trails on are noticeably quicker.**
