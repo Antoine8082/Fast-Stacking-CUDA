@@ -5,6 +5,25 @@ public repo and shows every section newer than the version you are running, so
 each heading must start with `## <version>` and sections must stay in
 descending version order.
 
+## 1.11.11
+
+**GESD and Linear fit rejection now run on the graphics card.** Choosing either
+used to cost you far more time than it should have.
+
+- Rejection is the step that decides, pixel by pixel, which frames disagree with
+  the rest — that is what removes cosmic rays, satellites and aircraft.
+  Winsorized sigma, the default, has run on the card for a long time. GESD and
+  Linear fit never did, so picking either quietly moved the heaviest part of the
+  stack back onto the processor. Measured on a 107-frame set, that one step took
+  29 seconds against 2.6 seconds for the default.
+- Both now run on the card. On those same 107 frames a **GESD** stack went from
+  58 seconds to 39, and a **Linear fit** stack from 59 seconds to 32.
+- The master is **identical to the last bit**. This is a speed change only;
+  nothing about what comes out has moved.
+
+Both options still ask for the slower engine overall, so the note in Options is
+unchanged and still correct. That part is next.
+
 ## 1.11.10
 
 **Defect fix could damage frames instead of repairing them.** Fixed, and it is
