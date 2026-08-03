@@ -5,6 +5,39 @@ public repo and shows every section newer than the version you are running, so
 each heading must start with `## <version>` and sections must stay in
 descending version order.
 
+## 1.11.4
+
+**Most stacks are now noticeably faster, and nothing about the results changes.**
+
+- **Stacks between 16 and about 130 frames were using the slower engine.** They
+  no longer do. FS-CUDA picks between two engines by frame count, and the
+  threshold was set back when the fast one genuinely lost on small stacks. It
+  has not lost for a long time — it has since taken on monochrome, normalization,
+  autocrop, resume, per-pixel weighting and trail rejection, and got quicker at
+  all of them — but the threshold was never revisited.
+
+  Re-measured on real frames, both engines, identical masters throughout:
+
+  | frames | before | now |
+  |---|---|---|
+  | 32 | 7.9 s | **4.9 s** |
+  | 64 | 10.0 s | **9.0 s** |
+  | 128 | 25.5 s | **16.8 s** |
+  | 200 | 41.2 s | **26.1 s** |
+
+  Below 16 frames the old engine really is quicker, and still gets the work.
+
+- **Large stacks are a little faster too**, from removing redundant work in the
+  trail pre-pass: 1089 frames with the full quality set went 3 min 55 s to
+  3 min 39 s.
+
+- A fix worth naming even though you would never have seen it: when two
+  candidate trails tied on exactly equal evidence, which one got masked depended
+  on an ordering the code never guaranteed. Same frames in, same measurements,
+  potentially different pixels out. It is now decided explicitly.
+
+Your masters are unchanged — byte for byte, on 1089 real frames, on every path.
+
 ## 1.11.3
 
 **Large stacks on the CPU path could die without saying anything. Fixed.**
