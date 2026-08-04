@@ -5,6 +5,34 @@ public repo and shows every section newer than the version you are running, so
 each heading must start with `## <version>` and sections must stay in
 descending version order.
 
+## 1.12.4
+
+**A frame is now measured once, not twice.** Frame Selection measures every
+frame before you review it — and stacking then measured every frame all over
+again, doing the identical work and throwing the first result away. Analysis now
+writes its measurements into the same checkpoint the stack reads.
+
+    review your frames, then review again    13.2 s -> 0 s
+    stacking after a review                  no longer re-measures anything
+
+Being precise about the second line: the stack does not finish sooner. That pass
+is limited by how fast frames come off the disk, so removing its calculation
+frees the processor without shortening it. What you get back is the review loop —
+adjusting a filter and looking again is now instant instead of a fresh pass over
+every frame.
+
+The cached numbers decide which frames get stacked, so the cache is strict about
+when it may be used: change anything they depend on — calibration, debayer,
+defect repair, the detection threshold — and it recomputes rather than serving a
+stale answer. Verified on 300 frames: a cache hit reproduces all six
+measurements exactly.
+
+**Checkpoints written by 1.12.0 or earlier are no longer resumed.** They carry
+the reference frame chosen by the *old* rule — the one fixed in 1.12.1, which
+could leave a plume beside a bright nebula. Resuming one would have quietly
+restored that choice, so those checkpoints are discarded and the work is redone
+instead. This only affects an interrupted run you were part-way through.
+
 ## 1.12.3
 
 **Frame analysis is about twice as fast, and gives exactly the same answers.**
