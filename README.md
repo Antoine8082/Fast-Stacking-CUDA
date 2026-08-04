@@ -240,7 +240,7 @@ réinitialisation.
 
 ## Benchmark
 
-Measured on **FS-CUDA 1.11.15**, on a Lenovo Yoga Pro 9 16IAH10 — Core Ultra 9
+Measured on **FS-CUDA 1.11.16**, on a Lenovo Yoga Pro 9 16IAH10 — Core Ultra 9
 285H (16 threads), 64 GB RAM, **RTX 5070 Laptop** — stacking **1089 real light
 frames of 3008 × 3008 px** (OSC/CFA, 16-bit) from an internal NVMe SSD. Times
 are the full run: reading every frame, registering, integrating and writing the
@@ -248,9 +248,9 @@ master.
 
 | Settings | Time |
 |---|---|
-| Normalize + Autocrop + RGB align + Per-pixel weight + Defect fix<br>(RCD debayer, Winsorized Sigma, Noise weighting) | **3 min 32 s** |
-| Same, plus Reject trails | **3 min 23 s** |
-| Same, with Defect fix unticked | **3 min 06 s** |
+| Normalize + Autocrop + RGB align + Per-pixel weight + Defect fix<br>(RCD debayer, Winsorized Sigma, Noise weighting) | **3 min 08 s** |
+| Same, plus Reject trails | **3 min 02 s** |
+| Same, with Defect fix unticked | **3 min 09 s** |
 
 Memory use stays flat regardless of how many frames you stack.
 
@@ -259,11 +259,11 @@ normalization reads the very frames the trail pass has already prepared, so with
 Normalize on the two share that work; switch trails off and normalization has to
 prepare them itself. If you are already normalizing, trail rejection is free.
 
-**Defect fix is the one option worth a thought.** It has been on by default since
-1.11.10, and on this set it cost 26 seconds and produced a master identical to
-the last bit — it found nothing to repair, because the sensor is clean. It stays
-on by default because a bad column you have not noticed ruins a master and costs
-far more than 13%. If you know your sensor is clean, untick it.
+**Defect fix is now free.** It has been on by default since 1.11.10, and it used
+to cost 26 seconds on this set. Since 1.11.16 the table cannot tell you whether
+it is on: 3 min 08 s with, 3 min 09 s without. It still produces a master
+identical to the last bit here, because this sensor is clean — but on a camera
+with a bad column it repairs it, and it no longer asks anything in return.
 
 **Every option now runs on the fused GPU engine.** Drizzle, defect repair, the
 GESD and Linear fit rejection modes and the SuperPixel debayer each moved onto it
@@ -274,7 +274,7 @@ remains only for machines with no CUDA graphics card, for lights that are not
 
 ### Performances mesurées
 
-Mesuré sur **FS-CUDA 1.11.15**, sur un Lenovo Yoga Pro 9 16IAH10 — Core Ultra 9
+Mesuré sur **FS-CUDA 1.11.16**, sur un Lenovo Yoga Pro 9 16IAH10 — Core Ultra 9
 285H (16 threads), 64 Go de RAM, **RTX 5070 Laptop** — pour l'empilement de
 **1089 poses réelles de 3008 × 3008 px** (CFA/OSC, 16 bits) depuis un SSD NVMe
 interne. Les durées correspondent au traitement complet : lecture de chaque
@@ -282,9 +282,9 @@ pose, alignement, intégration et écriture du maître final.
 
 | Réglages | Durée |
 |---|---|
-| Normalize + Autocrop + RGB align + pondération par pixel + Defect fix<br>(dématriçage RCD, Winsorized Sigma, pondération Noise) | **3 min 32 s** |
-| Idem, plus Reject trails | **3 min 23 s** |
-| Idem, avec Defect fix décoché | **3 min 06 s** |
+| Normalize + Autocrop + RGB align + pondération par pixel + Defect fix<br>(dématriçage RCD, Winsorized Sigma, pondération Noise) | **3 min 08 s** |
+| Idem, plus Reject trails | **3 min 02 s** |
+| Idem, avec Defect fix décoché | **3 min 09 s** |
 
 La consommation mémoire reste stable quel que soit le nombre d'images.
 
@@ -294,12 +294,12 @@ préparées : avec Normalize activé, les deux se partagent ce travail ; sans
 traînées, la normalisation doit les préparer elle-même. Si vous normalisez déjà,
 la réjection des traînées est gratuite.
 
-**Defect fix est la seule option qui mérite réflexion.** Activée par défaut
-depuis la 1.11.10, elle a coûté 26 secondes sur cette série et produit un maître
-identique au bit près : elle n'a rien trouvé à réparer, le capteur étant sain.
-Elle reste activée par défaut parce qu'une colonne défectueuse que vous n'auriez
-pas remarquée gâche un maître et coûte bien plus que 13 %. Si vous savez votre
-capteur sain, décochez-la.
+**Defect fix est désormais gratuite.** Activée par défaut depuis la 1.11.10,
+elle coûtait 26 secondes sur cette série. Depuis la 1.11.16, le tableau ne
+permet plus de dire si elle est active : 3 min 08 s avec, 3 min 09 s sans. Elle
+produit toujours ici un maître identique au bit près, le capteur étant sain —
+mais sur une caméra présentant une colonne défectueuse, elle la répare, et ne
+demande plus rien en échange.
 
 **Toutes les options tournent désormais sur le moteur GPU fusionné.** Le drizzle,
 la réparation des défauts, les modes de réjection GESD et Linear fit et le

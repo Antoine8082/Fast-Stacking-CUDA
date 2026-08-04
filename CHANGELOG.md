@@ -5,6 +5,30 @@ public repo and shows every section newer than the version you are running, so
 each heading must start with `## <version>` and sections must stay in
 descending version order.
 
+## 1.11.16
+
+**Defect fix is now nearly free.** It was the largest single cost in a default
+stack; it is now barely measurable.
+
+- Measured on 1089 frames: a run with Defect fix went from **3 min 32 s to
+  3 min 08 s**. Switching it off now measures 3 min 09 s — in other words it is
+  no longer possible to tell whether it is on from the clock. On a 107-frame set
+  the whole run went from 20.7 s to 16.9 s. The masters are **identical to the
+  last bit** — this is the same repair, done in parallel.
+- The repair examines every row and column of every frame, and it was doing that
+  on four threads while the rest of your processor waited on other work. It now
+  spreads across the machine.
+- The note in Options told you it cost about 13% and that you could take 26
+  seconds back by unticking it. That is no longer true and has been corrected —
+  there is now nothing to take back.
+
+**Two new frame-selection controls, both off by default.** `--min-inlier-frac`
+drops frames that matched too few stars during registration, and `--min-fwhm`
+sets a *lower* bound on frame sharpness — which is not a mistake: a stack wants
+frames of a **consistent** width, and unusually narrow frames broaden the master
+just as unusually soft ones do. Both are measured but neither is yet proven to
+improve a master, so neither is on by default and no quality claim is made.
+
 ## 1.11.15
 
 **Every option now runs on the fast engine.** SuperPixel was the last one that
