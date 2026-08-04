@@ -5,6 +5,32 @@ public repo and shows every section newer than the version you are running, so
 each heading must start with `## <version>` and sections must stay in
 descending version order.
 
+## 1.12.5
+
+**Large stacks on the classic engine now integrate on the graphics card.** That
+path refused the card past 256 frames, because the processor measured faster
+there. It did when that was written; it stopped being true when the integration
+kernel was rebuilt in 1.12.3. Re-measured on 300 real frames:
+
+| rejection | processor | graphics card | |
+|---|---|---|---|
+| Winsorized sigma | 87 s | 77 s | 1.1× |
+| GESD | 297 s | 187 s | 1.6× |
+| Linear fit | 222 s | **73 s** | **3.0×** |
+
+Masters are identical to the last bit either way, so this is purely a speed
+switch. `--no-gpu-large` restores the old behaviour on hardware where it does
+not hold.
+
+**Most people will never reach this.** The fast engine handles every stack of 16
+frames or more, so the classic path only runs for lights that are not 16-bit, or
+when you force it. It was worth correcting rather than leaving a stale
+measurement in place, but it will not change an ordinary run.
+
+Nothing else changes: this release is otherwise measurements and notes recorded
+in the code, including four separate attempts to improve registration that were
+each tested and rejected.
+
 ## 1.12.4
 
 **A frame is now measured once, not twice.** Frame Selection measures every
