@@ -5,6 +5,30 @@ public repo and shows every section newer than the version you are running, so
 each heading must start with `## <version>` and sections must stay in
 descending version order.
 
+## 1.12.9
+
+**The Consistency control now runs the right way round.** It used to ask for a
+sigma, and sigma runs backwards: 5 dropped nothing, 1.5 dropped the most. So the
+scale read 0, 5, 4, 3, 2 — off at *both* ends and strongest in the middle. That
+is not something anyone should have to learn.
+
+It is now a plain strength from **0 to 10**:
+
+    0     off - every frame kept (the default)
+    1-3   gentle: trims only genuinely odd frames
+    5     moderate
+    8     the usual choice if you want the effect
+    10    strictest: keeps only the most consistent frames
+
+**Higher always means stricter.** On a 1089-frame session, strengths 1 to 10
+drop 0, 2, 25, 73, 132, 188, 233, 255, 287 and 306 frames — each step does more
+than the last, which the old scale never did.
+
+Everything else about it is unchanged: stricter means sharper and shallower,
+gentler means deeper and softer, and the line underneath still tells you exactly
+how many of *your* frames the current setting would keep. If you had a value
+saved, it is converted automatically — an old 2.0 becomes strength 9.
+
 ## 1.12.8
 
 **Fixes the Consistency band tooltip, which did not appear.** The explanation
