@@ -5,6 +5,39 @@ public repo and shows every section newer than the version you are running, so
 each heading must start with `## <version>` and sections must stay in
 descending version order.
 
+## 1.12.11
+
+**A master now records the settings that produced it, not just their names.**
+
+Two masters stacked from the same 28 frames at different rejection sigma were
+compared and turned out to carry identical history: both said
+`rejection winsorized sigma` and neither said which sigma. The only way to tell
+the runs apart was to compare the pixels themselves.
+
+They did differ, just not where anyone would look. After matching the two
+stretches the difference is 0.30% of the signal and sits entirely on stars —
+1.7e-3 rms in the brightest 1% of the image against 1.5e-4 in the faint half,
+with the background noise unchanged (4.271e-3 vs 4.260e-3).
+
+That is rejection working correctly. Clipping only acts where the frames
+disagree, which on well-registered calibrated subs means cosmic ray hits and
+star cores where sub-pixel jitter spreads the samples. Everywhere else no
+sample is an outlier at any setting, so both runs return the same plain
+average. **On a couple of dozen clean frames, sigma is not a lever worth
+turning** — it earns its keep on longer sessions, and on frames carrying
+satellites, planes or real outliers.
+
+So the files were not wrong. They were silent, and provenance exists precisely
+so it is not. The history now records:
+
+- the sigma low, sigma high and winsorization point actually used;
+- GESD's alpha and outlier cap, or linear fit's sigmas;
+- every frame-selection cut that is switched on, with its value.
+
+`0 rejected` also now reads `0 frames dropped`. Read as a pixel count it
+claimed rejection had done nothing at all, which is exactly the wrong
+conclusion it invited.
+
 ## 1.12.10
 
 **Two drizzle bugs in the LRGB / narrowband batch, both from the same cause:
