@@ -5,6 +5,32 @@ public repo and shows every section newer than the version you are running, so
 each heading must start with `## <version>` and sections must stay in
 descending version order.
 
+## 1.12.6
+
+**Your master now records how it was made.** Open any master in a FITS header
+viewer and it says so outright:
+
+    HISTORY FS-CUDA: stacked 1089 frames, 0 rejected
+    HISTORY FS-CUDA: master dark APPLIED, master flat APPLIED
+    HISTORY FS-CUDA: rejection winsorized sigma, debayer RCD, weighting noise
+    HISTORY FS-CUDA: options: cosmetic defect normalize rgb-align per-pixel
+
+This came from a simple question — "I can't see *building master flat*, only
+*building master dark*" — that turned out to have no way of being answered. The
+flat was being applied; there was just nothing that ever said so. A master is
+the thing you keep, so it should tell you what went into it.
+
+**Calibration no longer scrolls past.** Each master announces itself while it is
+built, but a master takes only a few seconds to make, so the second message went
+by right behind the first. There is now a line that **stays** until stacking
+starts: `Calibration: dark from 41 frames | flat from 41 frames`.
+
+**Two silent failures fixed.** A calibration folder containing no FITS files
+returned quietly and the master was simply not applied, while the box still
+showed a path — it now warns that it is stacking without one. And a single
+master FITS file loaded with no message at all, so "loaded instantly" and
+"ignored" looked identical.
+
 ## 1.12.5
 
 **Large stacks on the classic engine now integrate on the graphics card.** That
