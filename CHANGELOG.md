@@ -5,6 +5,52 @@ public repo and shows every section newer than the version you are running, so
 each heading must start with `## <version>` and sections must stay in
 descending version order.
 
+## 1.12.7
+
+**The Consistency band now tells you what it will do, and warns you when it is
+the wrong tool.**
+
+**It has limits.** The value is held between **1.5 and 5.0**, or 0 for off.
+Outside that it genuinely cannot do anything, which was not obvious before: on a
+1089-frame session, 0.5 and 1.0 both kept exactly the same 779 frames, and
+anything from 5.0 upward kept all 1089. It used to accept any number and look
+effective while doing nothing.
+
+**Clear instructions**, in the tooltip:
+
+    0    off - every frame kept (the default)
+    1.5  the lowest setting that does anything
+    2.0  the usual choice - start here
+    3.0  gentler: drops fewer frames, keeps more depth
+    5.0  the highest setting that does anything
+
+Lower means sharper and shallower, higher means deeper and softer. There is no
+best value, because it is a trade — so the software does not pretend to pick one
+for you.
+
+**It now shows what your setting would actually keep**, from the frames it has
+already measured: *band 2.0 keeps 813 of 1089 (FWHM 6.07 to 7.97 px)*. No more
+guessing and re-running.
+
+**And it warns you when a band is the wrong tool entirely.** The band cuts evenly
+either side of the middle, which only makes sense if your session has a middle.
+If sharpness drifted steadily through the night, it removes one END of the
+session instead of the worst frames — and that end might be the good one. FS-CUDA
+now measures this and says so:
+
+> This session DRIFTS (−0.91): the stars got steadily sharper through it. A
+> consistency band cuts evenly either side of the middle, so here it removes one
+> END of the night rather than the worst frames. Stacking the first and last
+> thirds separately and comparing them will tell you more than any band setting.
+
+On four real sessions the reading was −0.909, −0.003, +0.014 and +0.186, so the
+warning appears on the one that drifts and stays quiet on the rest.
+
+This is worth taking seriously. On the drifting session, the frames that measured
+*sharpest* individually produced the *worst* master: stacking the first 400
+frames gave 11.30 on matched stars against 12.75 for all 1089 — a bigger
+improvement than any band setting offers.
+
 ## 1.12.6
 
 **Your master now records how it was made.** Open any master in a FITS header
