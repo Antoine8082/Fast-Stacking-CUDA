@@ -5,6 +5,35 @@ public repo and shows every section newer than the version you are running, so
 each heading must start with `## <version>` and sections must stay in
 descending version order.
 
+## 1.12.10
+
+**Two drizzle bugs in the LRGB / narrowband batch, both from the same cause:
+nothing on that path knew a drizzled master's pixels are half-size.**
+
+**Drizzled batches could not be plate solved.** The solver was told the master's
+pixels were sensor pixels, which is only true when nothing rescales them —
+drizzle halves them. It therefore searched at twice the real plate scale, and
+against a 6% tolerance it can never match. Verified on a real drizzled M1
+master: at the old scale the solve failed outright; at the correct one it solves
+with **225 stars, RMS 0.36 arcsec**. Ordinary stacks were never affected, which
+is why this only ever showed up on a batch.
+
+**Stars had a coloured fringe on one side, with drizzle only.** The registration
+that puts the narrowband onto the colour master's grid uses tolerances measured
+in pixels, tuned for sensor pixels. On a 2× drizzled master those are half the
+real tolerance, so the fit came out worse:
+
+    no drizzle   0.26 px between colour and structure
+    2x drizzle   1.14 px
+
+All three colour channels come from the colour master, so they shift *together*
+against the luminance — which is why the channels themselves measure perfectly
+aligned everywhere, centre and corners, while the fringe is plainly visible. The
+tolerances now follow the master's pixel size.
+
+If you have a drizzled batch showing this, restacking will fix it — the frames
+are fine.
+
 ## 1.12.9
 
 **The Consistency control now runs the right way round.** It used to ask for a
