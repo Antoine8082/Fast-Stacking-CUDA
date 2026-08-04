@@ -5,6 +5,36 @@ public repo and shows every section newer than the version you are running, so
 each heading must start with `## <version>` and sections must stay in
 descending version order.
 
+## 1.12.2
+
+**RGB align was making colour alignment worse, not better. Fixed.**
+
+The option is meant to remove the colour fringing that atmospheric dispersion
+leaves on stars, by shifting red and blue back onto green. It measured that
+shift by comparing star positions between the three colour channels — and that
+measurement does not work. On a master whose channels already sat within
+**0.015 pixels** of each other it reported half a pixel for red and nearly a
+pixel for blue, then dutifully applied them:
+
+    channels before RGB align   0.015 px apart
+    after, old version           1.31 px apart
+    after, fixed version         0.013 px apart
+
+The giveaway is that its two answers were near-opposite and diagonal — that is
+the geometry of the colour filter array, so what it was measuring was a quirk
+of centroiding an interpolated channel, not anything in the sky.
+
+It now measures the shift by correlating the channels directly, and **declines
+any correction below 0.4 pixels**, because resampling costs a little sharpness
+every time and a correction smaller than the measurement is worth is not worth
+making. On a well-tracked target high in the sky the normal result is that it
+does nothing at all — which is the right answer, since the debayer already puts
+all three colours on one grid. It still corrects a real shift: that case is
+tested, and so, now, is the case of leaving an already-aligned master alone.
+
+If you have masters stacked with RGB align on, they carry a roughly 1-pixel
+blue-green split. Restacking fixes it.
+
 ## 1.12.1
 
 **A stack could grow a faint plume beside a bright nebula. Fixed.** Reported on
