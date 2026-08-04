@@ -5,6 +5,116 @@ public repo and shows every section newer than the version you are running, so
 each heading must start with `## <version>` and sections must stay in
 descending version order.
 
+## 1.12.0
+
+Stable release. Faster, and three things that were quietly wrong are fixed.
+
+**The default settings now match the ones this program documents.** The Options
+panel has always described a "Default setup" and the Restore button has always
+applied it — but a new installation did not start there. Normalize, RGB align,
+Per-pixel weight, Plate solve and Resume were all documented as on, Restore
+switched them on, and a fresh install had all five **off**. Frame selection
+started on Manual instead of Auto. The list existed in two places and only one
+was kept up to date; there is now one copy, which Restore and the first run both
+read, so they cannot come apart again. If you have used FS-CUDA before, your
+saved settings are untouched — this only changes what a new installation starts
+with.
+
+### Speed
+
+
+**Stacking is about 25 seconds faster on a 1089-frame set, and every master is
+identical to the last bit.** The change is entirely inside the integration
+stage — the part that decides, for each pixel, which frames to keep and averages
+the survivors. Measured on the same 1089 real frames as the benchmark table:
+
+| Settings | Before | Now |
+|---|---|---|
+| Normalize + Autocrop + RGB align + Per-pixel weight + Defect fix | 3 min 08 s | **2 min 43 s** |
+| Same, plus Reject trails | 3 min 02 s | **2 min 35 s** |
+
+The integration stage itself went from 71.8 s to 46.4 s — 35% off. Two things
+did it, and both were found by measuring rather than reading the code:
+
+- The rejection loop kept a *byte* per frame per pixel to record which frames
+  had survived. It now keeps a **bit**. That is a fifth of everything the
+  graphics card was reading, spent carrying one bit of information, and the card
+  was running at 75% of the fastest it can possibly read memory — so the only
+  thing that helps is reading less. It also frees 367 MB of graphics memory,
+  which the stacker immediately spends on processing the image in taller strips.
+- A counting table inside the median search had quietly landed in slow memory
+  instead of registers. Moving it is invisible from the source; it took reading
+  the compiler's own report on the kernel.
+
+Everything above was verified against the previous build on real data, in all
+three rejection modes (Winsorized Sigma, GESD, Linear fit) and on both engines.
+Not "looks the same" — the files compare equal, byte for byte.
+
+**New: `--fwhm-band`, a frame-selection filter on *consistency*.** It keeps
+frames whose stars are close to the session's typical width and drops both the
+soft ones and the unusually sharp ones. That second half sounds wrong and is
+not: averaging star profiles of differing widths gives a result broader than any
+single frame, so an unusually narrow frame hurts a stack much as a soft one
+does. Measured on 1089 frames, comparing the *same physical stars* in each
+master: `--fwhm-band 2.0` kept 814 frames and improved the master by 0.42 px.
+It is off by default — it buys sharpness with depth, and which you want is your
+call.
+
+### Plate solving
+
+**The file header was overriding the focal length you typed.** Every time a
+stack finished, the Focal and Pixel boxes were silently overwritten with
+whatever the FITS header said. That was meant to stop a stale value being used,
+but it made the header the authority — and headers are wrong: the lights this
+was found on record `FOCALLEN = 260` for a 2800 mm scope, because the capture
+software wrote the wrong number. Anyone who typed the correct value had it
+replaced behind their back, and the solve then could not work at any rotation.
+
+The header now only fills a box you have left **empty**. When it disagrees with
+what is set, the panel says so, shows what the header claimed, and offers a
+button to use it — the choice is yours.
+
+**A failed solve now tells you what your optics imply**, instead of just "check
+Focal and Pixel size": *"Focal 260 mm with 3.76 µm pixels means 2.98 arcsec per
+pixel, so this master would cover 2.49 × 2.49 degrees."* If that is not the
+field you photographed, you know immediately which number is wrong.
+
+**Solving was verified at every output scale** — full resolution, 2×2 binned,
+2× drizzled and SuperPixel — by checking the sky coordinates written into each
+master against the geometry it actually has. All four agree to better than half
+a percent and land on the same point in the sky.
+
+### Corrections
+
+**Several notes in Options quoted measurements that had gone stale**, and
+because they are prose nothing caught them. All re-measured on the same
+300-frame set:
+
+- SuperPixel was described three times as costing you the fast engine. It has
+  not since 1.11.15 — it is the *quicker* of the two debayers (20 s against 23).
+  Compared fairly, at the same output size and over the same 209 stars, it is
+  also as sharp, finds more stars and is quieter. RCD stays the default because
+  it keeps the full sensor resolution and you can always bin afterwards, which
+  is a real reason, unlike the one that was printed.
+- GESD was said to cost "about twice the time". On 300 frames it costs **six
+  times** (23 s → 139 s) and got nothing for it here. Its cost grows with the
+  size of the stack, which the old note did not say.
+- Linear fit was said to cost "about a quarter more". It costs **twice**, and on
+  a session with no drift it is far worse than the note implied: 329 stars at
+  noise 7.36, against 774 and 3.18.
+- Drizzle's cost was quoted as 1.5× and is 2.6×; trail rejection's as a third
+  more, and it is free when Normalize is on.
+
+### Housekeeping
+
+**Scratch files left by an interrupted run are cleaned up straight away.** A
+stack that is killed part-way through can leave tens of gigabytes behind — an
+interrupted 1089-frame run leaves 11 GB. Cleanup used to wait six hours before
+touching anything, and only ever looked for the older engine's files, so a
+crash on the fast engine could leave its scratch until some later run happened
+to sweep it. The owning process is now identified, and if it is gone the file
+goes immediately. A completed stack has always cleaned up after itself.
+
 ## 1.11.16
 
 **Defect fix is now nearly free.** It was the largest single cost in a default
