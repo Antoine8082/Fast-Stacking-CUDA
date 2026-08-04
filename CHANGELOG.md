@@ -5,6 +5,37 @@ public repo and shows every section newer than the version you are running, so
 each heading must start with `## <version>` and sections must stay in
 descending version order.
 
+## 1.12.1
+
+**A stack could grow a faint plume beside a bright nebula. Fixed.** Reported on
+a 1089-frame M57 set: a soft white flare running from the nebula toward the
+bottom right of the master. It was not the telescope and it was not in the
+frames — FS-CUDA was choosing a bad reference frame.
+
+Every frame is registered against one **reference** frame, so that choice
+decides how well the whole stack lines up. FS-CUDA picked the *sharpest*
+frame. That sounds right and is not: on a night whose transparency drifts, the
+frames that *measure* sharpest come from the worst end of the session. On the
+reported set the typical frame measured 7.02 and it chose one measuring 4.90 —
+30% sharper than the entire night, and the second-to-last frame taken.
+
+    that reference    651 stars   noise 1.71   plume
+    a typical one    1719 stars   noise 1.64   clean
+
+The reference is now the most **typical** frame rather than the sharpest, and a
+frame far sharper than the rest of the session is no longer eligible at all.
+
+Worth knowing *why* it looked like a flare, because it explains why nothing
+caught it sooner: registering against a poor reference leaves many frames
+slightly misaligned. Outlier rejection removes a misplaced **star** — a small
+bright dot in the wrong place stands out — but it cannot remove misplaced
+**nebulosity**, because a slightly shifted copy of a soft glow blends into the
+noise. So the stars stayed sharp while the nebula smeared. Every star-based
+quality measure said the broken master was the *better* one.
+
+If you have a master with this artifact, restacking is enough — the frames are
+fine.
+
 ## 1.12.0
 
 Stable release. Faster, and three things that were quietly wrong are fixed.
