@@ -5,6 +5,50 @@ public repo and shows every section newer than the version you are running, so
 each heading must start with `## <version>` and sections must stay in
 descending version order.
 
+## 1.12.3
+
+**Frame analysis is about twice as fast, and gives exactly the same answers.**
+The pass that measures every frame before Frame Selection ran read, then
+calibrate, then measure, strictly in turn — so the disk sat idle while the
+graphics card worked, and both sat idle while the processor measured. It also
+read each frame as 32-bit floating point, moving twice the bytes it needed to.
+
+    300 frames, back to back:   22.0 s -> 10.9 s
+
+The numbers it produces drive which frames get stacked, so "faster" is only
+acceptable if it is also identical. Every per-frame value from the old and new
+builds was compared: across 300 frames, all six measurements — FWHM,
+eccentricity, PSF signal, background, noise, star count — match to the last
+digit.
+
+**New: a Consistency band, under Frame selection.** It keeps frames whose stars
+are close to the session's *typical* width, dropping both the soft ones and the
+unusually sharp ones. Dropping the sharp ones is not a mistake: averaging star
+profiles of differing widths gives a result broader than any single frame, so an
+unusually narrow frame widens the master much as a soft one does. A stack wants
+consistency, not the sharpest subs.
+
+Measured at 2.0 sigma, comparing the *same stars* in each master:
+
+| set | kept | FWHM before → after | noise |
+|---|---|---|---|
+| 1089 frames, drifting seeing | 813 | 11.83 → **11.45** | +16% |
+| 124 frames, red filter | 110 | 5.98 → **5.87** | −1% |
+| 107 frames, red filter | 95 | 8.89 → **8.12** | +4% |
+| 91 frames, steady seeing | 91 | 6.78 → 6.78 | 0% |
+
+It never made a master softer, and on a steady night it drops nobody at all. But
+it buys sharpness with **depth** — the noise rose where it discarded frames — so
+it is **off by default**. Which of the two you want is your call, and the tooltip
+carries these numbers so you can make it. This control already existed on the
+command line; it had no way into the window until now.
+
+**Your raw frames are never modified.** That was always true, and it is now
+checked automatically on every build: the test hashes every light before and
+after a stack with all options on — including the two that rewrite image data in
+memory — and requires them back byte-for-byte identical, same size, same
+timestamps. A master can be rebuilt; a night of raw frames cannot.
+
 ## 1.12.2
 
 **RGB align was making colour alignment worse, not better. Fixed.**
