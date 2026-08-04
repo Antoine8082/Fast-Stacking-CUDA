@@ -5,6 +5,14 @@ public repo and shows every section newer than the version you are running, so
 each heading must start with `## <version>` and sections must stay in
 descending version order.
 
+## 1.12.8
+
+**Fixes the Consistency band tooltip, which did not appear.** The explanation
+added in 1.12.7 was attached to the wrong thing: a small "off" label sitting
+beside the box, which is empty whenever the band is switched on — so there was
+nothing there to hover over. Hovering the box itself now shows the instructions,
+as it was meant to.
+
 ## 1.12.7
 
 **The Consistency band now tells you what it will do, and warns you when it is
