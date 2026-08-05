@@ -5,6 +5,26 @@ public repo and shows every section newer than the version you are running, so
 each heading must start with `## <version>` and sections must stay in
 descending version order.
 
+## 1.12.17
+
+**The option tooltips were still in English. They are translated now.**
+
+In 1.12.16 the interface switched to French but the help text on the option
+checkboxes -- Normalize, Autocrop, Defect fix, RGB align, Reject trails,
+Drizzle, Per-pixel weight, Resume after interruption -- stayed English. Their
+labels changed and their explanations did not.
+
+Those tooltips reach the screen by a different route from the rest of the
+window, and the pass that collected the text for translation never looked down
+that route. Sixty-six more strings are translated as a result, including all
+six of those tooltips.
+
+What remains in English is deliberate and short enough to list: the sensor
+pattern names RGGB, BGGR, GRBG and GBRG, which are the same in French; the
+title bar, which Windows is told once before the saved language is read; and
+the file-picker title, which belongs to a Windows dialog rather than to the
+panel.
+
 ## 1.12.16
 
 **The whole window in French, and three more file formats.**
