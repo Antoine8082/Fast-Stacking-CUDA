@@ -5,6 +5,38 @@ public repo and shows every section newer than the version you are running, so
 each heading must start with `## <version>` and sections must stay in
 descending version order.
 
+## 1.12.19
+
+**A faster stacking option that costs nothing in quality, and FS-CUDA now says
+so when it cannot find your graphics card.**
+
+*Compact stack buffer.* While frames wait on the graphics card, FS-CUDA holds
+each of their pixels as a 32-bit number. The step that throws out satellite
+trails and cosmic rays reads that store far more than anything else in a run,
+and it is limited by how fast the card can move it -- so storing each pixel in
+half the space makes it faster. It also halves the memory a frame occupies,
+which lets FS-CUDA work on taller strips of the image and re-read less overlap.
+
+On 1089 frames the rejection step went from 53.4 to 48.3 seconds and the whole
+second pass from 69.3 to 62.1, with the master unchanged: the same 684 stars,
+the same noise, and the same stars measured 11.625 wide either way.
+
+It was checked the same way on eight different stacks -- including a set shot
+through a meridian flip, three narrowband filters, and half-hour exposures --
+and nothing moved by more than 0.06%, with that difference going in both
+directions from one set to the next. It is still off by default, because the
+result is not identical to the last bit, and that is the standard everything
+here has to meet before it becomes automatic. Turn it on under the options as
+*Compact stack buffer*.
+
+*No graphics card.* If FS-CUDA cannot find a CUDA graphics card it has always
+carried on using the processor instead, which works and produces the same
+master but takes many times longer on a large set. It did not say so anywhere,
+so the only symptom was a stack that felt inexplicably slow. The options panel
+now tells you plainly, and the tooltip names the three usual causes: a card
+older than this version supports, a missing or very old NVIDIA driver, or a
+laptop running on its built-in graphics.
+
 ## 1.12.18
 
 **Some frames were being stacked at the wrong size and angle. They are placed
