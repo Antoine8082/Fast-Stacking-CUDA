@@ -5,6 +5,53 @@ public repo and shows every section newer than the version you are running, so
 each heading must start with `## <version>` and sections must stay in
 descending version order.
 
+## 1.12.12
+
+**The coloured fringe on stars in an LRGB or narrowband batch. It was two
+separate things, and 1.12.10 fixed neither of them.**
+
+**The registration.** 1.12.10 rescaled the alignment tolerances for drizzled
+masters, on the strength of a 1.14 pixel measurement. That measurement was
+taken by cross-correlating whole images, which does not work on a filter set:
+the channels are different EMISSION, so the nebula itself differs between them
+and pulls the answer off the stars. Measured on the same masters, the whole
+image said 0.44 and 0.76 px where the STARS were 0.17 and 0.18 px apart, and
+disagreed about which direction. The registration was never a pixel out.
+
+The real error changes SIGN across the field — one way at the centre, the
+other at the corner — so no single shift could ever have removed it. That is
+an affine transform failing to describe a genuine difference between two
+finished masters, and a second-order one describes it. Measured on an M1
+filter set, red against green over about 1500 stars:
+
+    before   spread 0.136 px across the field, worst 0.28
+    after    spread 0.016 px across the field, worst 0.05
+
+Drizzled batches improve by the same factor. Run time is unchanged and every
+channel came out slightly sharper.
+
+**The halo.** What remained is not a registration error at all. Filters are
+rarely shot in the same seeing, so their masters come out at different
+sharpness — 5.57, 6.00 and 6.44 px on that set. A sharp core in one channel
+sitting inside a broader halo in another IS a colour gradient across every
+star, a green core in a magenta ring, and no amount of aligning touches it.
+
+There is now a **Match channel sharpness** option (`--match-psf`) that blurs
+every colour channel out to the widest. It removes that halo by construction,
+and costs nothing measurable in time. It is OFF by default because it buys
+that with colour resolution: green went from 5.57 to 6.43 px. That is usually
+the right trade, since the eye takes detail from luminance and does not see
+softness in colour, but it is a real loss and the choice is yours.
+
+**The warning that should have told you.** FS-CUDA only mentioned mismatched
+channels above a 30% spread, so a 16% spread — plainly visible as coloured
+stars — passed in silence. It now speaks at 10%, quotes your actual numbers,
+says the cause is the data rather than the software, and points at the switch.
+
+Still there, and honest about it: part of the fringe comes from the channels
+having differently LOPSIDED star profiles, not merely differently sized ones.
+Matching the widths only reduces that part. It is being looked at.
+
 ## 1.12.11
 
 **A master now records the settings that produced it, not just their names.**
