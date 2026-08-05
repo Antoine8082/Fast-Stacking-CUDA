@@ -5,6 +5,39 @@ public repo and shows every section newer than the version you are running, so
 each heading must start with `## <version>` and sections must stay in
 descending version order.
 
+## 1.12.14
+
+**One mono mode instead of two.**
+
+Ticking **Mono / LRGB frames** used to reveal a second checkbox, *LRGB batch
+(split by filter)*, which chose between stacking one filter and stacking a
+whole session. That was a choice you should never have had to make: stacking a
+single filter is simply the batch with one row filled — it writes that filter's
+master and nothing else, exactly as the single-folder path did.
+
+So the checkbox is gone. Mono goes straight to the filter rows, and the only
+question left is the real one about your data: whether your frames sit in a
+folder per filter, or in one folder with the filter named in the FITS header.
+
+*If you had a mono layout saved with the batch switched OFF*, it used a
+different set of Lights / Darks / Flats boxes and those paths do not carry over
+into the per-filter rows. Pick that session's folders once and it will be
+remembered as usual. A saved layout that already used the batch is unaffected.
+
+**A memory bound on the frame readers.**
+
+The threads that read frames from disk had no limit on how far ahead of the
+rest of the pipeline they could run. On a long session they could hold every
+frame in memory at once — on a 1089-frame run, tens of gigabytes. It had not
+been reported, because the defect-repair stage happens to be slow enough to
+hold those threads back, but a session with defect repair turned off was
+running much closer to that edge than anyone intended, and was measurably
+SLOWER for it.
+
+They are now held to a bounded lead, which is under a gigabyte on that same
+run. Masters are byte-for-byte identical; this is about not running out of
+memory on a long night, not about speed.
+
 ## 1.12.13
 
 **Your filters can now tell you when one of them is out of adjustment.**
