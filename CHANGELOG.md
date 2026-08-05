@@ -5,6 +5,54 @@ public repo and shows every section newer than the version you are running, so
 each heading must start with `## <version>` and sections must stay in
 descending version order.
 
+## 1.12.13
+
+**Your filters can now tell you when one of them is out of adjustment.**
+
+Chasing the last of the coloured fringe on stars turned up something FS-CUDA
+had never been able to say: on one M1 set the GREEN channel's stars were six
+times more lopsided than red's or blue's — and so were its raw frames, before
+any stacking. Green and blue were shot the same night and red on a different
+one, yet green was the odd one out, which points at that filter's tilt or its
+focus position rather than at the sky.
+
+FWHM cannot see this. A lopsided star and a round one of the same width
+measure identically, so nothing in any stacker would have mentioned it.
+
+An LRGB or narrowband combine now reports how lopsided each channel's stars
+are, and names the odd one out:
+
+    combine: star asymmetry R +0.009  G -0.027  B -0.005
+    combine: the G channel's stars are 3.2x more lopsided than the other two.
+             That is not stacking - it is in the frames. Check that filter's
+             tilt and its focus position.
+
+It flags the one that disagrees with its neighbours, not simply a large value:
+a bad night makes every channel lopsided together and there is nothing to fix
+in that.
+
+**A correction to the Consistency control's advice.** Its help claimed the
+setting had never made a master softer. Measured on the three filters of that
+same set, comparing the SAME stars in each master, it made two of the three
+WORSE — and a plain upper limit on FWHM beat it on all three:
+
+    filter   none    Consistency band   an absolute cap
+    R       6.434    6.336              5.995
+    G       5.927    6.026  (worse)     5.866
+    B       6.938    7.111  (worse)     6.665
+
+Neither control is right for every session. The band is symmetric, so on a
+night whose sharpness drifts it removes one END of the session rather than the
+odd frames, and a short session gives it little to work with. The claim has
+been replaced by the counter-example, and once frames are analysed the panel
+now also prices the alternative — what an absolute cap would keep — so both
+are on the table with your own numbers beside them.
+
+**Faster.** The calibrate and debayer stage spent 60% of its time filling
+104 MB per frame with zeros that were overwritten a moment later. Removing
+that took the analysis pass from 42.5 s to 38.8 s on a 1089-frame run, with
+the master byte-for-byte identical.
+
 ## 1.12.12
 
 **The coloured fringe on stars in an LRGB or narrowband batch. It was two
