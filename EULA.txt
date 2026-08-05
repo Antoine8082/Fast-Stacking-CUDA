@@ -51,17 +51,52 @@ NOT:
    Remove, alter, or obscure any proprietary notices, labels, or FITS metadata
    injected by the Unregistered Version.
 
-   Distribute, host, or mirror the Software binary on third-party websites
-   without explicit permission from the developer. Users must download the
-   Software from the official source.
+   Distribute the Software in modified form, or separately from this
+   Agreement. Redistribution of the complete, unmodified package IS permitted
+   -- see Section 4.
 
-4. Intellectual Property
+4. Redistribution
+
+You are expressly permitted, without asking the developer first, to copy, host,
+mirror, and redistribute the Software, provided that all of the following hold:
+
+   The Software is redistributed COMPLETE and UNMODIFIED, exactly as published
+   by the developer, together with this Agreement, and with the licensing,
+   trial, and FITS metadata mechanisms intact.
+
+   You charge nothing for the Software itself. You may not sell it, put it
+   behind a paywall, or make it part of a paid product or service. Recovering
+   no more than actual media or bandwidth costs is acceptable.
+
+   You do not bundle it with installers, advertising, tracking, or other
+   software, and you do not present it as your own work.
+
+   You identify FS-CUDA as the work of the developer and, wherever a link is
+   possible, point to the official source:
+   https://github.com/Antoine8082/Fast-Stacking-CUDA
+
+   You do not distribute, publish, or share any personal License Key, and you do
+   not distribute any build whose licensing or trial mechanism has been altered
+   or removed.
+
+Redistributing the Software transfers no ownership of it. Each person who
+installs it accepts this Agreement in their own right, and their permission to
+USE it remains personal and non-transferable as described in Section 1.
+
+A note for mirrors: the Software checks for updates and can replace itself in
+place. A mirrored copy will fall behind as new versions are published, so please
+state which version you host, or link to the official source, so that users can
+reach the current release.
+
+5. Intellectual Property
 
 All rights, title, interest, and copyrights in and to the Software, including
 any architectural designs, CUDA optimizations, and documentation, are owned
-exclusively by the developer. This Software is NOT Open Source.
+exclusively by the developer. This Software is NOT Open Source: the permission
+to redistribute the binary granted in Section 4 is not a grant of any right to
+the source code, nor a licence to create derivative works.
 
-5. Disclaimer of Warranties
+6. Disclaimer of Warranties
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
@@ -69,7 +104,7 @@ FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT. The developer does not warrant
 that the Software will be error-free or that it will not cause performance
 throttling or thermal events on your specific GPU/hardware configuration.
 
-6. Limitation of Liability
+7. Limitation of Liability
 
 IN NO EVENT SHALL THE DEVELOPER BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,

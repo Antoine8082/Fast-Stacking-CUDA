@@ -5,6 +5,30 @@ public repo and shows every section newer than the version you are running, so
 each heading must start with `## <version>` and sections must stay in
 descending version order.
 
+## 1.12.20
+
+**You may now share FS-CUDA freely.**
+
+Until this release the licence asked you not to host or mirror the program, and
+to send people to the official download instead. That restriction is gone. You
+may copy it, put it on your own site, hand it to your astronomy club, or include
+it on a disc for a star party, without asking permission first.
+
+The conditions are the obvious ones: pass it on complete and unmodified, with
+the licence alongside it; do not charge for it or fold it into something you
+sell; do not bundle it with installers or advertising; and say whose work it is,
+with a link to the official page where that is possible. Personal licence keys
+stay personal and must not be shared, as before.
+
+If you do mirror it, please say which version you host, or link to the official
+page as well. FS-CUDA updates itself in place, so a copy left sitting on a
+server will quietly fall behind.
+
+*Also fixed:* the **Drizzle 2x** tick box could not be ticked. The Compact stack
+buffer option added in 1.12.19 was placed in the same slot, so the two were drawn
+on top of one another and Drizzle sat underneath, unreachable. Each has its own
+row now. If you are on 1.12.19 and wanted Drizzle, this is the fix.
+
 ## 1.12.19
 
 **A faster stacking option that costs nothing in quality, and FS-CUDA now says
