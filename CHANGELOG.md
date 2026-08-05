@@ -5,6 +5,46 @@ public repo and shows every section newer than the version you are running, so
 each heading must start with `## <version>` and sections must stay in
 descending version order.
 
+## 1.12.18
+
+**Some frames were being stacked at the wrong size and angle. They are placed
+properly now, and the stack is faster for it.**
+
+Registering a frame means finding the transform that lines its stars up with the
+reference. On a 1089-frame session, 49 of those transforms came out impossible:
+one frame was being resampled into the master at 7.19x magnification and turned
+by 83 degrees, another at 9.74x, another shrunk to a tenth of its size. No
+telescope does that between two frames of the same night.
+
+Nothing caught them, and the two obvious checks cannot. The residual -- how far
+the matched stars miss -- was 0.004, 0.001 and 0.000 pixels on the three worst
+frames in the set, the best figures in the whole run, because a transform with
+six unknowns fits three stars exactly no matter where those stars are. Counting
+matched stars does not work either: two of the bad frames matched 27 and 24, all
+of them clustered in one part of the sky, which says nothing about the far
+corners.
+
+What does work is geometry. Two frames of one session through one telescope see
+the same sky at the same scale, so the transform between them can rotate and
+shift but never magnify or skew. Frames that fail that test are re-fitted as a
+plain shift, and left where they were shot if even that finds no support.
+Rotation is deliberately not limited -- a mount that flips at the meridian turns
+the field a full 180 degrees, and those frames are perfectly good.
+
+For your masters this is mostly invisible: on the test session the noise and the
+star sharpness did not move, because the outlier rejection was already throwing
+away the pixels those frames misplaced. What it does mean is that a session where
+this happens more often -- poor seeing, thin cloud, a mount that slipped -- is no
+longer quietly stacking frames at the wrong scale.
+
+It also made the stack faster. FS-CUDA sizes each upload from where a frame's
+transform says its pixels come from, so an impossible transform demanded an
+upload spanning the whole sensor. Sane transforms cut the data pushed to the card
+from 31.6 GB to 22.1 GB and the integration pass from 71.6 to 67.3 seconds.
+
+If any frame in your session needed re-fitting, the count is recorded with the
+master.
+
 ## 1.12.17
 
 **The option tooltips were still in English. They are translated now.**
