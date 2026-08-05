@@ -5,6 +5,47 @@ public repo and shows every section newer than the version you are running, so
 each heading must start with `## <version>` and sections must stay in
 descending version order.
 
+## 1.12.16
+
+**The whole window in French, and three more file formats.**
+
+There is now an **EN / FR** button beside the FS-CUDA wordmark at the top of the
+panel. Pressing it switches the entire interface immediately -- no restart --
+and the choice is remembered with your other settings.
+
+Everything is translated: every label, button, heading, status line and dialog,
+and all thirty-one tooltips including the long ones that carry measured tables.
+Nothing is left half in English. The measured NUMBERS stay as they are: 5.57 px
+is 5.57 px in both languages, and a decimal comma inside a table that already
+uses commas would only make it harder to read. The manual has been bilingual
+for a while and is unchanged.
+
+**FS-CUDA now opens XISF and TIFF files, and no longer turns away FITS files it
+should always have accepted.**
+
+The reader used for every light demanded a very specific kind of FITS: 16-bit,
+with one particular scaling. Frames from most other cameras and capture
+programs were refused -- and refused in the middle of stacking, long after you
+had chosen them. It now accepts any FITS whose pixel values are whole numbers
+in the normal 0 to 65535 range, whatever the file says its type is. A camera
+counts photons; how the program that saved it chose to write those counts is
+not something you should have to think about.
+
+**XISF** is what a PixInsight workflow produces, so it is what many people
+already have. Calibrated frames, registered frames and masters can be stacked
+directly, and the acquisition details in them -- exposure, filter, date -- are
+read exactly as they are from a FITS file, so plate solving and the LRGB filter
+split work as usual.
+
+**TIFF** is what Siril, DeepSkyStacker and many capture programs export.
+Greyscale or colour, 8, 16 or 32-bit. One thing to know: a TIFF carries no
+exposure, filter or date, so a TIFF light cannot be plate solved from its
+header and cannot be sorted by filter automatically.
+
+Files that genuinely cannot be read now say so by name and tell you what to do
+-- a compressed XISF, a BigTIFF, or a file whose values are not whole counts.
+Nothing is quietly rounded to fit.
+
 ## 1.12.15
 
 **A third off the analysis pass, and about thirteen seconds off a long run.**
