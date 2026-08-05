@@ -5,6 +5,34 @@ public repo and shows every section newer than the version you are running, so
 each heading must start with `## <version>` and sections must stay in
 descending version order.
 
+## 1.12.15
+
+**A third off the analysis pass, and about thirteen seconds off a long run.**
+
+Two changes that only pay together, which is why each of them measured as
+useless on its own.
+
+The stage that calibrates and debayers every frame was doing two jobs on one
+thread: feeding the graphics card, and copying each finished frame out of the
+transfer buffer. The copy is 104 MB a frame and was the larger half, so the
+card sat idle waiting for it. The copy now happens on its own workers.
+
+That alone changed nothing -- it simply moved the queue. With the copy out of
+the way, reading and preparing the frames became the limit, and the largest
+part of that was defect repair: a column or row defect belongs to the SENSOR,
+so it sits in the same place all night, and looking for it in all 1089 frames
+means finding the same nothing 1089 times. The first 16 frames are still
+examined in full. If none of them has a defect the rate drops to one frame in
+eight, and any frame that does turn one up puts it back to checking everything,
+permanently. A camera that HAS defects is treated exactly as before.
+
+Measured on a 1089-frame session:
+
+    before   analysis 39.3 / 40.0 s     whole run 1m54 / 1m56
+    after    analysis 25.1 / 26.8 s     whole run 1m40 / 1m42
+
+Masters are byte-for-byte identical.
+
 ## 1.12.14
 
 **One mono mode instead of two.**
