@@ -5,6 +5,32 @@ public repo and shows every section newer than the version you are running, so
 each heading must start with `## <version>` and sections must stay in
 descending version order.
 
+## 1.12.21
+
+**The advice on frame weighting now tells you what PSF signal costs, not only
+where it wins.**
+
+The tooltip on the Weighting setting said that PSF signal wins on a short steady
+session, and left it there. Retested on four sessions rather than the two it was
+built on, that claim holds -- but it was only half the picture, because the
+sharpening is never free.
+
+    session            sharper by     noisier by
+    7 x 1800s              1.0%          2.1%
+    48 narrowband          3.1%          2.1%
+    107 filtered           3.8%          1.2%
+    400 with drift         none          2.3%
+
+So PSF signal sharpens a short, steady session by a few percent, gains nothing
+at all on a long drifting one, and costs about 2% more background noise every
+time. The tooltip now shows this and says plainly that the choice is sharpness
+against depth.
+
+The default is unchanged, and deliberately so. Switching it for you would trade
+depth for sharpness on every short session without asking. The panel already
+tells you which of these regimes your frames are in once they have been
+analysed; the choice stays yours.
+
 ## 1.12.20
 
 **You may now share FS-CUDA freely.**
