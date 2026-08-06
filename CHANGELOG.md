@@ -5,6 +5,39 @@ public repo and shows every section newer than the version you are running, so
 each heading must start with `## <version>` and sections must stay in
 descending version order.
 
+## 1.12.22
+
+**Each filter's master now gets its own sky coordinates. Before this, an LRGB
+set without an L filter produced nothing another program could flux-calibrate.**
+
+Plate solving writes the sky coordinates into a master so other software knows
+where the picture points. FS-CUDA did that for the combined colour master, but
+not for the individual filter masters saved beside it -- the R, G and B files.
+
+That went unnoticed while sets included an L filter, because there was always a
+colour master to work from. On a set of R, G and B only, the colour master was
+the single file with coordinates in it, and the calibration steps that matter
+for mono data run on each filter separately. Every file needed was missing them.
+
+Each filter master is now solved in its own right. This is not the colour
+master's solution copied across, and it must not be: every filter is stacked
+against its own reference frame, so the three sit on slightly different grids.
+Measured on the set that turned this up, they land about six pixels apart -- a
+borrowed solution would put every star in the wrong place while looking
+perfectly correct. They all point at the same patch of sky, so the star
+catalogue is fetched once and reused, and the extra work is a few seconds per
+filter at save time.
+
+Verified on that set: red, green, blue and the colour master each solved, on
+355 to 362 stars, all four to within about 0.7 arcseconds.
+
+*Also fixed, in the command-line tool:* an LRGB run there never plate solved
+anything at all, and the solve did not account for SuperPixel debayering or
+output binning -- either of which changes how much sky one pixel covers, and
+either of which made a solve fail for reasons that were hard to see. Both paths
+now take that figure from the same place, so an option added later cannot
+quietly break one of them again.
+
 ## 1.12.21
 
 **The advice on frame weighting now tells you what PSF signal costs, not only
