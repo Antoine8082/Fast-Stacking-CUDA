@@ -163,7 +163,10 @@ guide.
   so clearly and exits if yours does not support it.
 - An NVIDIA GPU, **GeForce GTX 16-series / RTX 20-series or newer** (Turing or
   later). Older or non-NVIDIA machines run a slower CPU-only fallback.
-- The Microsoft Visual C++ Redistributable (x64) — bundled by the installer.
+- The **Microsoft Visual C++ Redistributable (x64)**. Most machines already have
+  it. If FS-CUDA will not start and Windows names a missing
+  `VCRUNTIME140.dll` or `MSVCP140.dll`, install it once from
+  <https://aka.ms/vs/17/release/vc_redist.x64.exe> and try again.
 - No CUDA toolkit install needed; the runtime is built in.
 
 ### Configuration requise
@@ -174,7 +177,10 @@ guide.
 - Un GPU NVIDIA, **GeForce GTX série 16 / RTX série 20 ou plus récent**
   (Turing ou ultérieur). Les machines plus anciennes ou non NVIDIA utilisent un
   repli logiciel plus lent, uniquement sur processeur.
-- Le Microsoft Visual C++ Redistributable (x64) — fourni par l'installeur.
+- Le **Microsoft Visual C++ Redistributable (x64)**. La plupart des machines
+  l'ont déjà. Si FS-CUDA ne démarre pas et que Windows signale un fichier
+  `VCRUNTIME140.dll` ou `MSVCP140.dll` manquant, installez-le une fois depuis
+  <https://aka.ms/vs/17/release/vc_redist.x64.exe> puis relancez.
 - Aucune installation du toolkit CUDA n'est nécessaire ; l'exécution est
   intégrée.
 
