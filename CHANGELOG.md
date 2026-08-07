@@ -206,7 +206,7 @@ in the normal 0 to 65535 range, whatever the file says its type is. A camera
 counts photons; how the program that saved it chose to write those counts is
 not something you should have to think about.
 
-**XISF** is what a PixInsight workflow produces, so it is what many people
+**XISF** is the native format of a well-known processing suite, so it is what many people
 already have. Calibrated frames, registered frames and masters can be stacked
 directly, and the acquisition details in them -- exposure, filter, date -- are
 read exactly as they are from a FITS file, so plate solving and the LRGB filter
