@@ -5,6 +5,36 @@ public repo and shows every section newer than the version you are running, so
 each heading must start with `## <version>` and sections must stay in
 descending version order.
 
+## 1.12.23
+
+**When your frames differ strongly from one another, their sky contrast is now
+matched automatically -- and the master records that it happened.**
+
+Normalize has always matched each frame's sky LEVEL to the reference, so a
+brightening sky does not wash the faint parts out. What it did not touch was
+contrast: a frame shot through moonlight or haze carries stronger sky
+fluctuations than a dark-night frame, and averaging the two as equals costs a
+little depth.
+
+With Normalize on, FS-CUDA now measures how much the frames differ and, when
+the spread is real, stretches or shrinks each frame so its sky fluctuations
+match the reference before combining. The frame's weight in the average is
+adjusted with it, so a frame is never counted twice for the same reason.
+
+It decides from your data because that is what the measurements said to do.
+Tested across six datasets: on sessions mixing nights or fighting the moon it
+buys a little sharpness and depth; on a single steady night it changes nothing
+-- and forcing it on regardless made one steady set slightly WORSE. So it
+engages only past the spread where it was seen to pay, filter by filter for
+RGB and narrowband sets, and the same way for colour cameras.
+
+You can tell whether it ran: the master's FITS history reads
+"options: ... normalize sky-scale" when it did. Nothing to configure; there is
+deliberately no checkbox. Command-line users can force it with --norm-scale or
+forbid it with --no-norm-scale.
+
+Masters from a single steady night come out identical to 1.12.22, to the byte.
+
 ## 1.12.22
 
 **Each filter's master now gets its own sky coordinates. Before this, an LRGB
