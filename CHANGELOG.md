@@ -5,6 +5,38 @@ public repo and shows every section newer than the version you are running, so
 each heading must start with `## <version>` and sections must stay in
 descending version order.
 
+## 1.12.37
+
+**Sharpening no longer damages colour masters. If a recent master showed violent
+colour noise or tinted corners, this was ours -- update and re-stack it.**
+
+The sharpening step prepared each channel by clipping everything below the
+channel's MEDIAN background. On a flat, deeply-stacked test field that was
+invisible, which is how it survived validation. On a real colour master it
+flattened the lower HALF of the sky -- in each channel differently -- and the
+moment the screen stretch touched the image, the sky exploded into colour
+mottling with tinted corners. The report and the picture that exposed it were
+a user's M104.
+
+Two changes, both verified on that same M104 by rebuilding it and LOOKING at
+it, not only measuring: the sky is flattened with the same smooth background
+model normalization trusts before the iteration and restored verbatim after,
+and the remaining pedestal is taken at the 0.5th percentile so the entire sky
+distribution passes through intact. The repaired master is visually identical
+to an unsharpened stack of the same data -- except the stars, which keep the
+full sharpening (star cores on the narrowband test: 5.46 to 3.95 pixels).
+Measured against an identical run without sharpening, the sky now moves by
+less than half an ADU anywhere in the field.
+
+The lesson is now part of the process: sharpening validation looks at
+stretched images, not only star measurements.
+
+Also in this release: **Best registration is on by default.** Every stack now
+builds both alignment models and keeps the measured winner, and the
+depth/sharpness report runs on that winner rather than being skipped. The
+checkbox remains for turning it off (--no-best-map on the command line) when
+speed matters more than the last percent.
+
 ## 1.12.36
 
 **A measurement bug that could quietly undo yesterday's sharpening is fixed.
