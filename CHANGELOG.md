@@ -5,6 +5,33 @@ public repo and shows every section newer than the version you are running, so
 each heading must start with `## <version>` and sections must stay in
 descending version order.
 
+## 1.12.35
+
+**Both of yesterday's tools now run by themselves, and their checkboxes are
+gone.**
+
+*PSF sharpening is simply how masters are finished now.* It costs a few seconds
+and measurably improves the result, so it is always on -- guarded twice, and
+both guards earned their shape by measurement. It steps aside on its own when
+the star profile is already at the sampling limit (on one shallow master,
+sharpening there turned a clean plate solve into fifty thousand false
+detections -- that mistake is now impossible), and after running it re-measures
+the master and keeps the result only if the star profile genuinely narrowed.
+One detail discovered while testing the second guard: a sharpened master
+suddenly shows THOUSANDS more stars, and that is not damage -- the background
+noise drops so much that real faint stars cross the detection threshold. The
+guard judges by the fitted star profile, never by counting. Command line:
+--no-deconv to opt out, --deconv-iters to adjust.
+
+*The depth/sharpness report runs automatically.* Detection is free; the second
+stacking pass happens only when your session's own numbers justify one, and the
+sharper block master appears next to the full one with _block in the name.
+A pleasant discovery on the reference session: with sharpening on, the full
+stack's extra depth converts into core sharpness, and the full master beat its
+own best block on BOTH axes -- so the report said so and wrote nothing extra.
+When the trade is real, you will have both files. Command line: --no-trade to
+opt out.
+
 ## 1.12.34
 
 **Two new quality tools: masters can sharpen themselves with their own measured
