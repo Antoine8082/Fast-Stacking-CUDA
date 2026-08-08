@@ -5,6 +5,31 @@ public repo and shows every section newer than the version you are running, so
 each heading must start with `## <version>` and sections must stay in
 descending version order.
 
+## 1.12.33
+
+**Normalize is now close to free. The recommended quality setup runs almost
+twice as fast, and the result is identical to the pixel.**
+
+Normalize is the option that makes stacks measurably deeper, and it cost more
+than the rest of the stack combined: on the 1089-frame reference set, a 91
+second run became 218 seconds with it on. Profiling found two diseases, neither
+of them the mathematics itself.
+
+First, the background survey before stacking staged every frame through the
+calibration pipeline about eighteen times -- once per stripe of the image --
+because its working window was sized for a different job. It now stages each
+frame once, and the curve fitting that used to hold everything up between
+frames runs on a small worker pool while the next frame is already being
+processed. The survey went from 98 to 13 seconds.
+
+Second, applying the correction re-evaluated the reference sky model -- which
+never changes -- for every pixel of every frame, in slow double precision. It
+is now computed once per stripe and shared, and the per-frame model evaluation
+does a sixth of its former work. That stage went from 21 extra seconds to 4.
+
+The same 1089-frame run with Normalize: 218 seconds before, 102 now. Every
+pixel of the result is identical, verified on the full set.
+
 ## 1.12.32
 
 **Sky-standard orientation is now simply how masters are saved, and the two
