@@ -5,6 +5,31 @@ public repo and shows every section newer than the version you are running, so
 each heading must start with `## <version>` and sections must stay in
 descending version order.
 
+## 1.12.31
+
+**Masters are saved in your capture orientation again. The mirrored, sky-standard
+form is now a switch, because the two cannot both be true at once.**
+
+1.12.28 to 1.12.30 saved masters reversed into the FITS standard row order, which
+is what made flux calibration work in other software. What that reversal also
+does -- unavoidably -- is flip the PARITY of the plate solution, so the saved
+image comes out a MIRROR of what the camera framed. That is one change, not two:
+parity is geometry, and a solution cannot be un-mirrored while the pixels stay
+put without the header describing an image that is not there.
+
+So it is yours to choose, and the default is your camera:
+
+- OFF (default): the master is stored exactly as captured. It matches your
+  subframes, and every master this program made before 1.12.28.
+- ON (the "Sky-standard orientation" option, or --sky-orientation on the command
+  line): rows reversed into the standard order. Some photometry tools need that
+  parity and will otherwise find your stars and pair none of them. The saved
+  image is mirrored.
+
+Turn it on for the tools that ask for it, and leave it off the rest of the time.
+Four new checks pin both directions, including that the default round-trips to
+the identical array and leaves the plate solution's parity untouched.
+
 ## 1.12.30
 
 **The Stack panel is a proper left column now.**
