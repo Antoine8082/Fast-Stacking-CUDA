@@ -5,6 +5,34 @@ public repo and shows every section newer than the version you are running, so
 each heading must start with `## <version>` and sections must stay in
 descending version order.
 
+## 1.12.26
+
+**Three simplifications, each backed by fresh measurement: the compact buffer is
+now simply on, your settings survive closing the app, and the rejection choices
+were put to the test.**
+
+*Compact stack buffer becomes the normal way of working.* Since 1.12.19 it was a
+checkbox; it has now been verified once more, on ten stacks covering every kind
+of data available here -- colour, mono, narrowband, a meridian-flip session,
+half-hour exposures. Star counts identical, star width and depth identical to
+three decimals, no artefacts, in no direction. It saves roughly ten percent of
+the stacking pass and lets larger stacks fit smaller graphics cards, so it is on
+for everyone and the checkbox is gone. (For support: --no-half on the command
+line forces the old path.)
+
+*Settings now survive closing the app.* They were only saved when a stack ran,
+so adjusting options and closing the window quietly lost the changes. Everything
+the panel can change -- options, folders, focal length and pixel size -- is now
+written when the app closes too.
+
+*The rejection methods were measured against each other* on seven, forty-eight
+and four hundred frames. Winsorized sigma -- the default -- won or tied at every
+count; the often-repeated advice that GESD is better on small stacks came out
+backwards here (3.5 percent LESS depth on seven frames); and Linear Fit cost a
+quarter to half the depth wherever the sky drifted. The defaults stay exactly as
+they are, now with numbers behind them. GESD and Linear Fit remain available for
+the specific situations they exist for.
+
 ## 1.12.25
 
 **A new option stacks your frames twice and keeps the sharper result -- because
