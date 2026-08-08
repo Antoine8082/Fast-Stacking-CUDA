@@ -5,6 +5,18 @@ public repo and shows every section newer than the version you are running, so
 each heading must start with `## <version>` and sections must stay in
 descending version order.
 
+## 1.12.30
+
+**The Stack panel is a proper left column now.**
+
+It sits against the left edge, always the full height of the window, and follows
+the window when you resize or maximise it. It can no longer be dragged out of
+place or left half-height. The master image takes whatever width the column
+leaves, so the two never overlap.
+
+The column's width is still yours: drag its right edge, and the width is
+remembered for next launch.
+
 ## 1.12.29
 
 **Completes the fix started in 1.12.28. If you are on 1.12.28, update: it wrote
