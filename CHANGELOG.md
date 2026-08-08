@@ -5,6 +5,30 @@ public repo and shows every section newer than the version you are running, so
 each heading must start with `## <version>` and sections must stay in
 descending version order.
 
+## 1.12.36
+
+**A measurement bug that could quietly undo yesterday's sharpening is fixed.
+Update if you are on 1.12.35.**
+
+Every internal quality judgement -- the sharpening self-check, Best
+registration's verdict, the depth/sharpness report -- scores a master by
+fitting its stars. That scoring sampled stars in detection order, and a
+sharpened master's detection list starts with thousands of faint stars the
+lower noise newly reveals: the sample became faint junk, the score read
+nonsense, and the self-check could revert a perfectly good sharpening -- on one
+master it reported 9.1 pixels where the true bright-star profile measured 3.3.
+All scoring now samples the BRIGHTEST stars, which keeps the sample physically
+comparable between a master and any reprocessed version of itself. The
+comparison tool had the same flaw in its fitted-profile table and got the same
+fix.
+
+Measured while validating this: with sharpening on, the choice between the two
+registration models no longer matters -- on the dataset where the flexible
+model used to win by 0.9 percent, the two now land within 0.15 percent of each
+other. Best registration stays available for the cases where sharpening steps
+aside, and stays off by default: doubling every run for a measured tie is not
+a default.
+
 ## 1.12.35
 
 **Both of yesterday's tools now run by themselves, and their checkboxes are
