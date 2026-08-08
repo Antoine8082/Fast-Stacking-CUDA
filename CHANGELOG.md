@@ -5,6 +5,27 @@ public repo and shows every section newer than the version you are running, so
 each heading must start with `## <version>` and sections must stay in
 descending version order.
 
+## 1.12.27
+
+**Settings really do survive now. A bug scrambled some of them every time they
+were saved -- since 1.12.19 -- and it is fixed.**
+
+The report that exposed it: language, "a folder per filter" and output binning
+kept resetting. The cause was not the saving added in 1.12.26 -- it was older
+and worse. The settings are stored by POSITION, and three recently added
+options had been slotted into the middle of the internal list while the file
+kept them at the end. Result: every save wrote a handful of settings into each
+other's slots. Output binning received the mono switch's value, folder-per-
+filter was overwritten with a constant, and the language toggled by itself.
+
+The order is now consistent everywhere, and a new automated check compares the
+three copies of that list on every build, so this cannot quietly return: adding
+an option in the wrong place now fails the build checks with the exact rows
+named.
+
+One unavoidable note: values scrambled by past saves cannot be reconstructed.
+After updating, check your options once -- they will stick from then on.
+
 ## 1.12.26
 
 **Three simplifications, each backed by fresh measurement: the compact buffer is
