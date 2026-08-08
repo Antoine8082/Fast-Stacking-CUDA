@@ -5,6 +5,31 @@ public repo and shows every section newer than the version you are running, so
 each heading must start with `## <version>` and sections must stay in
 descending version order.
 
+## 1.12.24
+
+**Correcting yesterday: sky contrast matching is no longer applied on its own,
+and the Normalize option turns out to be the most valuable switch in the panel.**
+
+1.12.23 made contrast matching automatic. More measurement since then, against
+frames registered by another program, shows that was the wrong call: wherever it
+engaged it traded depth for star width, and it lost depth more often than it
+gained it -- on two sets out of three, for about one percent of star width. That
+is a preference, not an improvement, and the program has no way to know which
+side of it you want. It is now off unless you ask for it (--norm-scale on the
+command line), and when you do ask, it still declines on frames too similar for
+it to matter.
+
+The same measurements turned up something far more useful. On a 45-frame set,
+switching **Normalize** on was worth about eight percent in depth -- more than
+any other single option, and more than the difference between our master and the
+one the same frames produced elsewhere. Normalize matches each frame's sky
+background to the reference before combining; without it, a sky that brightened
+during the session drags the whole stack. It is on by default in the panel, and
+its description now says plainly what it is worth. If you stack from the command
+line, pass --normalize.
+
+Masters from 1.12.23 that did not trigger contrast matching are unchanged.
+
 ## 1.12.23
 
 **When your frames differ strongly from one another, their sky contrast is now
