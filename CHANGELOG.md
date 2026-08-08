@@ -5,6 +5,36 @@ public repo and shows every section newer than the version you are running, so
 each heading must start with `## <version>` and sections must stay in
 descending version order.
 
+## 1.12.25
+
+**A new option stacks your frames twice and keeps the sharper result -- because
+we proved no shortcut can predict the winner.**
+
+Aligning frames can use a simple model, or one that also corrects the slight
+optical distortion every telescope has across its field. The correction sounds
+strictly better; it is not. On some sessions it genuinely sharpens the master
+-- star width 2.35 to 2.29 on one tested set, with star roundness matching the
+best reference master available -- and on others it makes the master measurably
+softer, for reasons that are invisible beforehand. We built five different
+predictors from the star measurements themselves; on one dataset every single
+one chose wrong, because the alignment statistics look PERFECT there while the
+finished master comes out worse.
+
+So the new **Best registration (2 passes)** option stops predicting. It stacks
+your frames both ways, measures the star sharpness of each finished master with
+a fitted profile -- an estimator checked against synthetic stars of known width,
+where it reads 5.00 on true 5.00 -- and keeps the winner. On every set we tried
+it chose correctly, including the one that defeated all five predictors. The
+choice and both measurements are written into the saved file, so you can always
+see what it decided and by how much.
+
+It costs a second stacking pass, roughly doubling the run time, which is why it
+is a checkbox and not the default. If your stars look slightly soft or stretched
+toward the corners, this is the switch to try.
+
+Command line: --best-map. The distortion model alone remains available as
+--distortion, now applied per frame only where a held-out test supports it.
+
 ## 1.12.24
 
 **Correcting yesterday: sky contrast matching is no longer applied on its own,
