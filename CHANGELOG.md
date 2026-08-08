@@ -5,6 +5,27 @@ public repo and shows every section newer than the version you are running, so
 each heading must start with `## <version>` and sections must stay in
 descending version order.
 
+## 1.12.29
+
+**Completes the fix started in 1.12.28. If you are on 1.12.28, update: it wrote
+one header card that undid its own repair.**
+
+1.12.28 corrected the real fault -- masters are stored in standard row order with
+a matching plate solve -- and then added a card saying so, ROWORDER. That card
+only restates what the standard already says, so it should mean nothing. It does
+not: it is not part of the FITS standard, it is a convention each program
+interprets for itself, and a program that acts on it can reorder the pixels
+without reordering the solution, which puts the file straight back where it
+started. Measured on two otherwise identical masters: without the card,
+calibration succeeded; with it, the same failure returned.
+
+So the rule is simply that we never write it. A file without it is governed by the
+standard alone, and every program agrees on what it means. FS-CUDA marks its own
+files with a private keyword instead, which other software is required to ignore,
+purely so it can read its own output back unchanged.
+
+Nothing else changed: the pixels and the plate solve are identical to 1.12.28.
+
 ## 1.12.28
 
 **Masters are now written the way the FITS standard says, so other astronomy
