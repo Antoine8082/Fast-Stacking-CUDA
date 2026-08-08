@@ -5,6 +5,24 @@ public repo and shows every section newer than the version you are running, so
 each heading must start with `## <version>` and sections must stay in
 descending version order.
 
+## 1.12.39
+
+**PSF sharpening is gone, and masters are saved exactly the way your camera
+framed them.**
+
+The sharpening experiment ends: its star gains were real, but so was the noise
+grain it put into deep colour masters, and the two are physically the same
+operation. Rather than leave a trap on the panel, the option is removed.
+Masters come out of the stack untouched, as they always did before -- your
+processing software is the right place for deconvolution, applied with masks
+where you choose.
+
+Masters are also stored in the camera's own orientation again, so every master
+matches its subframes and your older stacks. The trade, made knowingly: the
+embedded plate solution uses the camera's mirrored parity, so a photometry tool
+that demands standard parity needs its own plate solve first -- the one-click
+step that always worked.
+
 ## 1.12.38
 
 **Sharpening is opt-in again. The measurement that decided it is in the
