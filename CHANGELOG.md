@@ -5,6 +5,20 @@ public repo and shows every section newer than the version you are running, so
 each heading must start with `## <version>` and sections must stay in
 descending version order.
 
+## 1.12.32
+
+**Sky-standard orientation is now simply how masters are saved, and the two
+panel title bars are gone.**
+
+The orientation option lasted one version. Having seen both, the decision is
+that masters always come out in the standard order: it is what every
+coordinate-based tool expects, so flux calibration and plate-solved work in
+other software just work, with nothing to remember to switch on. The checkbox
+and the command-line flag are removed.
+
+The "Stack" and "Master" title bars spent a row of space repeating what the
+layout already says, so they are gone too.
+
 ## 1.12.31
 
 **Masters are saved in your capture orientation again. The mirrored, sky-standard
