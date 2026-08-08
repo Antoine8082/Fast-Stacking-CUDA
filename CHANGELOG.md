@@ -5,6 +5,43 @@ public repo and shows every section newer than the version you are running, so
 each heading must start with `## <version>` and sections must stay in
 descending version order.
 
+## 1.12.28
+
+**Masters are now written the way the FITS standard says, so other astronomy
+software can use their coordinates. This fixes flux calibration failing on our
+masters.**
+
+The symptom was specific: a photometric calibration would find hundreds of stars
+in the master and hundreds of catalogue stars in the same patch of sky, then
+match none of them at all and stop. Plate solving the master again in the other
+program made it work -- which was the clue, because solving does not change a
+single pixel.
+
+The cause was ours. A FITS file is defined to store its first row at the BOTTOM
+of the image. FS-CUDA worked top-down internally, because every capture program
+that feeds it does, and it never reordered rows -- so the master came out stored
+upside down, and the plate solve, being measured in that same upside-down frame,
+came out mirrored to match. The two errors cancelled for any program that reads
+the array as it lies, which is why our own solver, and every check we had, saw
+nothing wrong. A program that follows the standard got star positions reflected
+about the middle row: up to 3500 pixels out, so essentially nothing could match.
+
+Measured on the reported master: reading it as we wrote it, 645 of 1336
+catalogue stars fell on a real star. Reading it by the standard, 4 did.
+
+Masters now carry standard row order and a matching solution, and say so in the
+header. Frames from other programs are untouched on the way in -- reordering
+someone else's frame would change its colour pattern -- and a master written here
+reads back identically, so nothing downstream in FS-CUDA shifts. Seven new
+checks pin it, including that a foreign frame is still taken exactly as it lies.
+
+Colour masters also no longer inherit a single filter's name from one channel;
+an RGB image claiming to be Green was another thing that could send other
+software down the wrong path.
+
+Existing masters keep working in FS-CUDA. To use one for coordinate-based work
+in another program, re-save it from this version.
+
 ## 1.12.27
 
 **Settings really do survive now. A bug scrambled some of them every time they
