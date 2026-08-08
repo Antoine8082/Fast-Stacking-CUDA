@@ -5,6 +5,34 @@ public repo and shows every section newer than the version you are running, so
 each heading must start with `## <version>` and sections must stay in
 descending version order.
 
+## 1.12.34
+
+**Two new quality tools: masters can sharpen themselves with their own measured
+star profile, and a session's depth-versus-sharpness trade can be measured
+instead of guessed.**
+
+*PSF sharpen (deconvolution).* The master's star profile is fitted -- the same
+fit the comparison tool trusts -- and the image is deconvolved with a kernel of
+exactly that width. Measured on the 1089-frame reference stack: star cores 21
+percent tighter; on a narrowband master, 36 percent. No ringing, background
+noise reduced, star shapes preserved to within a few percent, and the plate
+solve runs on the sharpened image. Skipped automatically, leaving the master
+untouched, when the field has too few stars to measure a reliable profile.
+Off by default; a checkbox, or --deconv on the command line.
+
+*Depth/sharpness report.* When a night degrades -- drifting focus, worsening
+seeing -- the full stack is deeper but softer than a stack of only the good
+hours, and no measurement can choose for you: that is a preference. This option
+measures it instead of guessing. It finds the point where the session's
+character changes, stacks the frames before it as a second master, fits the
+star profile of both, and reports both numbers; the sharper block master is
+saved next to the full one with _block in the name, so you choose with both
+files in hand. One detail worth knowing: the direction of the per-frame
+sharpness numbers is NOT trusted, because it was measured pointing the wrong
+way on a real session -- frames that measure sharpest can stack worst. Only the
+two finished masters are believed. Off by default; a checkbox, or
+--trade-report on the command line.
+
 ## 1.12.33
 
 **Normalize is now close to free. The recommended quality setup runs almost
