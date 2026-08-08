@@ -5,6 +5,29 @@ public repo and shows every section newer than the version you are running, so
 each heading must start with `## <version>` and sections must stay in
 descending version order.
 
+## 1.12.38
+
+**Sharpening is opt-in again. The measurement that decided it is in the
+tooltip, both sides of it.**
+
+With the sky repaired, one honest cost remained, and a side-by-side of two
+finished M104 masters measured it precisely: deconvolution leaves the sky's
+amplitude and every colour ratio untouched (halo photometry identical to three
+decimals), but it sharpens the noise GRAIN about 45 percent -- and because each
+channel's grain is independent, a deep colour master reads it as fine colour
+speckle at 1:1. The star gains are equally real: cores 21-36 percent tighter,
+tilted-filter asymmetry straightened 2.5x. Both effects are the same operation;
+no guard can keep one and drop the other.
+
+So the choice is yours again: the "PSF sharpen (deconvolution)" checkbox is
+back, off by default, with the trade stated in plain numbers. Narrowband and
+star fields love it; deep colour masters you will stretch hard may not.
+Sky-standard orientation, Best registration and the depth/sharpness report are
+unchanged.
+
+If you stacked on 1.12.35-1.12.37 and the sky texture looks granular, re-stack
+without the option -- or keep it, if the tighter stars matter more to you.
+
 ## 1.12.37
 
 **Sharpening no longer damages colour masters. If a recent master showed violent
